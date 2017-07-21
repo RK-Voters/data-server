@@ -1,0 +1,138 @@
+Voter File VANID	 VoterName	ResultShortName	CreatedBy	CanvassedBy	CommitteeName	DateCreated	DateCanvassed	ContactTypeName	InputTypeName 
+27157	Teague, Christopher 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+280236	Lemieux, John Richard	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+313537	Perry, Catherine Elizabeth	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+399618	Cole, Karen Marie	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+450083	Peterson, Jonathan Nils	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+698069	Milton, Harry C	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+750698	Adams, Pamela Jean	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+750731	Adams, Randall Lee	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+752643	Alpers, Shawn Stephen	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+757123	Bailey, Sandra A	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+757135	Bailey, Sean L	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+767500	Bouchard, Brian K	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+770453	O'Brien, Laura Jean	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+771707	Brown, Barbara Eileen	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+771984	Brown, Donna J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+777830	Carey, Craig William	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+777886	Carey, William Joseph	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+779356	Sparks, Michelle Marie	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+785659	Cohen, Frances R	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+785720	Cohen, Robert N	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+794710	Daniels, James M	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+794732	Daniels, Linda L	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+795486	Conley, Darleen A	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+799186	Dewey, Charles Robert	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+799193	Dewey, Lisa Beth	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+807372	Edwards, Elaine P	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+807460	Edwards, Larry E	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+811047	Fasulo, Timothy P	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+814620	Foley, Joseph M	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+814681	Foley, Mary T	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+820757	Gelinas, Sylvia Landry	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+821178	Germani, Tressina Loreta	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+821979	Gilbert, Joan A	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+822044	Gilbert, Robert J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+824098	Goodell, David G	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+827661	Gribbin-Bouchard, Ann Marie 	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+828143	Groff, Deborah Tracey	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+835426	Haynes, Carl H	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+835459	Haynes, Pamela F	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+835508	Hayward, Josephine Hincks	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+842349	Hume, John W	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+842359	Hume, Sheri Lyn 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+843155	Hutchins, Ella M	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+843477	Hymer, Wayne Paul	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+846070	Jodrie, Gwendolyn M	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+846763	Johnson, Kathleen A	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+847966	Jones, Steven Donald	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+849111	Kaczynski, Grazyna Grace	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+851724	Kenney, David W	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+851903	Kent, Anna Lydia	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+855012	Korthy, Laurie A	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+858752	Larochelle, Catherine C	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+858760	Larochelle, Guy L	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+860505	Lebel, Patricia J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+863718	Libby, April Lynne	Refused	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+864035	Libby, John L	Refused	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+865418	Lizotte, Jamous P	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+867184	Lowery, James Thomas	Refused	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+868718	MacDonald, Ryan W	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+872519	Marston, Laura May	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+877462	McGrath, Mary C	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+881864	Miles, Ann J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+881901	Miles, Robert K	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+882953	Minervino, Joseph 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+882954	Minervino, Judith A	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+887088	Moulton, Pamela L	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+889634	Nappi, Margaret L	Refused	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+896467	Palestini, Angeline Marie	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+896470	Palestini, Kayla Marie	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+896471	Palestini, Nicolas 	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+900854	Perry, Christopher Robert	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+905422	Potts, Carlla E	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+913229	Ripley, Barbara G	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+913232	Ripley, David P	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+914492	Robinson, John C	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/09/2017	07/08/2017	Walk	Manual
+915506	Rogers, William B	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+916091	Rose, Geraldine 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+916102	Rose, John 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+920176	Sargent, William A	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+924510	Shea, Jennie S	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+927925	Smith, Constance M	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+929254	Smith, Thomas W	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+931397	Spydell, Lorraine A	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+932035	Stailing, Jodi J	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+932194	Stanhope, Judith M	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+939761	Theriault, Katherine Jean	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+944303	Trynor-Kenney, Andrea T	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+975600	Anthoine, Bradford Dean	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+975815	Kornblum, Sandrea E	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+991811	Marsh, Christina E	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+992185	Adams, Justin Michael	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+992445	Baldwin, Annemarie 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+992552	Larochelle, Craig Howard	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1061883	Holland, Edward Glenn	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1134260	Anthoine, Mary Theresa	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1147231	Everest, Christopher Shane	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1152421	Peterson, Beth Marie	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1167101	Groff, Reginald D	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1200190	Hickey, Conor M	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1210238	Walker-Sargent, Mary Walker	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1219408	Alpers, Emily Ann	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1382413	Abu, Mohamed M	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1390825	Burhoe, Sarah Rachel	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1531046	Brennan, Kitte J	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1572712	Susi, Lindsay Alexandra	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/09/2017	07/08/2017	Walk	Manual
+1573083	Abu, Marian M	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1574155	Quang, Leonardo Q	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1574156	Mahoney, Daniel Adam	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1576073	Quang, Xan 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1580520	Rideout, Matthew David	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1597346	Hume, Matthew Webb	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1598224	Yankowsky, Gladys J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1625319	Stailing, Scott M	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1639254	Brennan, Paul E	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1670613	Blazek, Emily Anne	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1670686	Hume, Joshua Scott	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1670752	Kenney, Zachary Scott	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1748538	Stone, Forrest J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1748544	Stone, Lindsay Joy	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1748664	Watts, Daniel Brian	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/09/2017	07/08/2017	Walk	Manual
+1748776	Boucher, Taylor Dawn	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+1780211	Scott, Martha Susan	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+1780282	Bailey, Megan Diane	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2084054	Huska, Amy Lea	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2099371	Rogers, Luke Lebel	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+2100134	Elder, Pamela J	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2124913	Huska, Scott Anthony	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2125051	Boucher, Monica Lynndoris	Not Home	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+2128832	Dobric, Goran 	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2129033	Quang, Tien Hue	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	07/10/2017	06/30/2017	Walk	Mobile
+2169104	Turner, Phelps Thomas	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2170753	Turner, Elizabeth Noelle	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2174951	Brennan, Bethany Marie	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2175469	Goodell, David Green	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2175534	Holland, Kelly 	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2175611	Lemieux, Barbara J	Canvassed	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile
+2175652	McCarthy, Kael 	Not Home	Joey Brunelle	Brunelle, Joey	BfP	06/26/2017	06/25/2017	Walk	Mobile

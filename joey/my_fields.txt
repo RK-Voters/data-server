@@ -1,0 +1,77 @@
+
+Voter Fields
+--
+RKID
+RK_CAMPAIGNID
+VANID
+
+(should be camel case, need "Suffix" and "Salutation")
+firstname
+lastname
+middlename
+
+
+(need to split out vAddress)
+stnum
+stname1
+unit
+city
+state
+zip
+
+(need to split out mAddress)
+mailstnum
+mailstname1
+mailunit
+mailcity
+mailstate
+mailzip
+
+enroll (should be "Party")
+yob (should be "DOB")
+email (should be "PreferredEmail")
+phone (should be "PreferredPhone")
+
+
+- In RK Voters (not in VAN)
+--
+votedin2011
+votedin2013
+
+bio
+
+profession
+employer
+
+phoneType
+
+lat
+lon
+
+volunteer
+active
+status
+closed
+callcount
+
+
+- In VAN (not in RK Voters)
+--
+
+CD
+SD
+HD
+
+DateReg
+
+======================================
+Contacts
+--
+vc_id
+VANID
+type
+datetime
+note
+amount
+status
+age

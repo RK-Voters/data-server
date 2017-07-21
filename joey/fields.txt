@@ -1,0 +1,106 @@
+
+Voter Fields
+--
+Voter File VANID
+
+
+
+LastName
+FirstName
+MiddleName
+Suffix
+Salutation
+
+vAddress
+City
+State
+Zip5
+Zip4
+
+
+mAddress
+mCity
+mState
+mZip5
+mZip4
+
+
+
+Party
+DOB
+PreferredEmail
+Preferred Phone
+Sex
+
+CD
+SD
+HD
+
+
+
+DateReg
+
+
+
+
+
+
+
+
+
+Contact Fields
+--
+  [VoterFileVANID] => 27157
+  [ResultShortName] => (Canvassed, Not Home, Refused)
+  [CanvassedBy] => Brunelle, Joey
+  [DateCreated] => 07/10/2017
+  [DateCanvassed] => 06/30/2017
+  [ContactTypeName] => Walk
+  [InputTypeName] => Mobile
+
+
+  // ignore
+  [VoterName] => Teague, Christopher
+  [CreatedBy] => Joey Brunelle
+  [CommitteeName] => BfP
+
+
+
+Survey Fields
+--
+
+    Voter File VANID
+
+    [SurveyQuestionLongName]
+        (
+            [17 Brunelle Support] => 1
+            [17 Brunelle LawnSign] => 1
+        )
+
+    [SurveyResponseName] => Array
+        (
+            [3 Undecided] => 1
+            [1 Strong Support] => 1
+            [2 Lean Support] => 1
+            [4 Lean Oppose] => 1
+            [5 Strong Oppose] => 1
+            [Yes] => 1
+
+
+// ignore
+FirstName
+MiddleName
+LastName
+SurveyQuestionId
+SurveyResponseId
+Cycle
+SurveyQuestionType
+SurveyQuestionLongName
+SurveyResponseName
+DateCreated
+DateCanvassed
+ContactType
+CreatedBy
+CanvassedBy
+InputType
+CommitteeName
