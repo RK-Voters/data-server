@@ -1,12 +1,12 @@
 <?php
 
-  include("rk_mysql.php");
+  include("models/rk_mysql.php");
 
   $config = array(
     "servername" => "localhost",
     "username" => "root",
     "password" => "root",
-    "database" => "rkvoters"
+    "database" => "rkvoters_data"
   );
 
   global $rkdb;
