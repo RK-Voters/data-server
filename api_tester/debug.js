@@ -22,7 +22,9 @@ function postWithAjax(myajax) {
 
 		$("#outputpre").text(jqXHR.responseText);
 
-		var headersTxt = jqXHR.getAllResponseHeaders() + "\nRough Size: " + parseInt(jqXHR.responseText.length/1000) + "kb";
+		var headersTxt = jqXHR.getAllResponseHeaders() +
+										"\nRough Size: " + parseInt(jqXHR.responseText.length/1000) + "kb" +
+										"\nQuery took " + ( (Date.now() - sendTime) / 1000) + " seconds";
 
 		$("#headerpre").text(headersTxt);
 	}
@@ -63,6 +65,8 @@ $("#submitajax").click(function(e) {
 	// 	console.log("BAD JSON");
 	// 	return;
 	// }
+
+		sendTime = Date.now();
 
     postWithAjax({
     	data : text
