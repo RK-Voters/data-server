@@ -67,10 +67,11 @@
 			return ($result) ? $result -> fetch_object() : array();
 		}
 
-		function get_rowFromObj($where, $table){
+		function get_rowFromObj($table, $where){
 			foreach($where as $k => $v) $whereStrs[] = $k . '="' . addSlashes($v) . '"';
 			$sql = 'select * from ' . $table . ' where ' . implode(' AND ', $whereStrs);
 			if($this -> debugMode) echo $sql . $this -> _linebreak();
+
 
 			return $this -> get_row($sql);
 		}
@@ -138,7 +139,7 @@
 		function updateOrCreate($table, $update, $where){
 
 			// look for it?
-			$row = $this -> get_rowFromObj($where, $table);
+			$row = $this -> get_rowFromObj($table, $where);
 
 			// if it's not there, add it!
 			if(count($row) == 0){
@@ -157,7 +158,7 @@
 		function  getOrCreate($table, $obj){
 
 			// look for it?
-			$row = $this -> get_rowFromObj($obj, $table);
+			$row = $this -> get_rowFromObj($table, $obj);
 
 			// if it's there, return it!
 			if(count($row) != 0) return $row;

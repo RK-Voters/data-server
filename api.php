@@ -27,6 +27,9 @@ $request 		= $data_model -> request;
 $data_model -> rk_campaignId = 1;
 
 
+
+
+
 // process api
 if(isset($request['api'])){
 	extract($request);

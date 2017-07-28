@@ -1,5 +1,10 @@
 <?php
 
+	function handleError($errorMessage){
+		echo json_encode(array("error" => $errorMessage));
+		exit;
+	}
+
 
 	Class RKVoters_Model {
 
@@ -12,6 +17,9 @@
 
 			// load request
 			$this -> request = $this -> _loadRequest();
+
+			// handle login
+			$this -> _handleLogin();
 
 		}
 
@@ -44,6 +52,31 @@
 			return $request;
 		}
 
+		function _handleLogin(){
+
+			// is there an access token?
+			if(!isset($this -> request['access_token'])){
+				handleError("Please provide an access token.");
+			}
+
+			// look up access token
+			$auth = $this -> db -> get_rowFromObj("user_access", array("access_token" => $this -> request['access_token']));
+			if(count($auth) == 0) handleError("Invalid access token.");
+
+
+			// what campaign is this access token for?
+			$this -> rk_campaignId = $auth -> rk_campaignId;
+
+
+			// get the user
+			$this -> user = $this -> getUserById($auth -> userId);
+			if(count($this -> user) == 0)  handleError("Access token is good, but user not found.");
+
+		}
+
+		function getUserById($userId){
+			return $this -> db -> get_rowFromObj("users", array("userId" => $userId));
+		}
 
 /****************************************************************
 *	STREETS & TURFS
