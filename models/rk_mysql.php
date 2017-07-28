@@ -7,24 +7,31 @@
     function __construct($config){
       extract($config);
 
-		// Create connection
-		$this -> conn = new mysqli($servername, $username, $password, $database);
-		$this -> debugMode = false;
-		$this -> linebreak = "\n\n";
+			// Create connection
+			$this -> conn = new mysqli($servername, $username, $password, $database);
+			$this -> debugMode = false;
+			$this -> linebreak = "\n\n";
 
-		if ($this -> conn->connect_error) {
-			die("Connection failed: " . $this -> conn -> connect_error);
+			if ($this -> conn->connect_error) {
+				die("Connection failed: " . $this -> conn -> connect_error);
+			}
 		}
-	}
 
 
-    function run_query($sql){
-		if ($this -> conn -> query($sql) !== TRUE) {
-			echo 	"Error: " . $this -> conn->error .
-						$this -> linebreak . $this -> linebreak . $sql .
-						$this -> linebreak . $this -> linebreak ;
+		function run_query($sql){
+			if ($this -> conn -> query($sql) !== TRUE) {
+
+				// $error_str = 	"Error: " . $this -> conn->error .
+				// 							$this -> linebreak . $this -> linebreak . $sql .
+				// 							$this -> linebreak . $this -> linebreak ;
+
+				// TBD: log to error table
+
+				// return to user
+				echo json_encode(array("error" => $this -> conn -> error));
+				exit;
+			}
 		}
-	}
 
 
     // ERROR HANDLING
@@ -50,21 +57,21 @@
 
     // GETTERS
 
-    	function get_var($sql){
-			$result = $this -> conn -> query($sql);
-			 $row = $result -> fetch_array();
-			 return $row ? $row[0] : false;
+    function get_var($sql){
+			 $result = $this -> conn -> query($sql);
+			 return $result ? $result -> fetch_array()[0] : false;
 		}
 
 		function get_row($sql){
 			$result = $this -> conn -> query($sql);
-			return ($result) ? $result -> fetch_assoc() : array();
+			return ($result) ? $result -> fetch_object() : array();
 		}
 
 		function get_rowFromObj($where, $table){
-			foreach($where as $k => $v) $whereStrs[] = $k . '=' . $v;
+			foreach($where as $k => $v) $whereStrs[] = $k . '="' . addSlashes($v) . '"';
 			$sql = 'select * from ' . $table . ' where ' . implode(' AND ', $whereStrs);
 			if($this -> debugMode) echo $sql . $this -> _linebreak();
+
 			return $this -> get_row($sql);
 		}
 
@@ -72,7 +79,7 @@
 			$result = $this -> conn -> query($sql);
 			if(!$result) return array();
 
-			while($response[] = $result -> fetch_assoc());
+			while($response[] = $result -> fetch_object());
 			unset($response[count($response) -1]);
 			return $response;
 		}
@@ -87,13 +94,13 @@
 			// generate sql
 			$sql = 'UPDATE ' . $table;
 			foreach($input as $k => $v){
-				$params[] = $k . '="' . addSlashes($v) . '"';
+				$params[] = $k . "='" . $this -> escape($v) . "'";
 			}
 			$sql .= ' SET ' . implode(',', $params);
 
 
 			foreach($where as $k => $v){
-				$whereStrs[] = $k . '=' . '"' . addSlashes($v) . '"';
+				$whereStrs[] = $k . "='" . $this -> escape($v) . "'";
 			}
 			$sql .= ' WHERE ' . implode(' AND ', $whereStrs);
 
@@ -111,7 +118,7 @@
 			$input = (array) $obj;
 			foreach($input as $k => $v){
 				$kstrs[] = "`" . $k . "`";
-				$vstrs[] = '"' . addSlashes($v) . '"';
+				$vstrs[] = "'" . $this -> escape($v) . "'";
 			}
 			$sql = 	'INSERT INTO ' . $table .
 					' (' . implode(', ', $kstrs) . ') VALUES (' . implode(',', $vstrs) . ')';
@@ -137,7 +144,7 @@
 			if(count($row) == 0){
 				$newObject = $update;
 				foreach($where as $k => $v) $newObject[$k] = $v;
-				$this -> insert($newObject, $table);
+				$this -> insert($table, $newObject);
 			}
 
 			// otherwise, update it
@@ -152,20 +159,18 @@
 			// look for it?
 			$row = $this -> get_rowFromObj($obj, $table);
 
-
-
 			// if it's there, return it!
 			if(count($row) != 0) return $row;
 
 			// otherwise, create it and return the new row
-			$this -> insert($obj, $table);
+			$this -> insert($table, $obj);
 			return $obj;
 
 		}
 
 
-	    // delete
-	    function delete($table, $where){
+		// delete
+		function delete($table, $where){
 			$sql = "DELETE FROM $table WHERE ";
 			foreach($obj as $k => $v) $where[] = $k . '=' . (int) $v;
 			$sql .= implode(' AND ', $where);
@@ -174,5 +179,13 @@
 
 			$this -> run_query($sql);
 		}
+
+
+
+		// UTILITIES
+		function escape($str){
+			return mysqli_real_escape_string($this -> conn, $str);
+		}
+
 
   }

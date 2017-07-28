@@ -1,23 +1,71 @@
 <?php
 
 
-	Class RKVoters_Client {
+	Class RKVoters_Model {
 
 		function __construct(){
 			global $rkdb;
 			$this -> db = $rkdb;
+
+			$this -> rk_campaignId = 1;
+
+
+			// load request
+			$this -> request = $this -> _loadRequest();
+
+		}
+
+		function _loadRequest(){
+			// get request (handle both json and typical http post)
+			if(count($_POST) == 0){
+				try {
+						$request = (array) json_decode(file_get_contents('php://input'));
+				}
+				catch(Exception $error){
+					print_r($error);
+					echo json_encode(array("error" => "Bad JSON."));
+				}
+			}
+			else {
+				$request = $_POST;
+			}
+
+			// append URI vars to REQUEST
+			foreach($_GET as $k => $v){
+				$request[$k] = $v;
+			}
+
+			// bounce empty requests
+			if(count($request) == 0 && count($_GET) == 0){
+				echo json_encode(array("error" => "No request sent."));
+				exit;
+			}
+
+			return $request;
 		}
 
 
+/****************************************************************
+*	STREETS & TURFS
+*	- getStreetList()
+* - getTurfList()
+* - updateTurfAssignment()
+* - updateTotals()
+****************************************************************/
+
 		// get list of available streets
 		function getStreetList(){
-			$sql = "SELECT * from voters_streets ORDER BY street_name";
+			$sql = "SELECT * from voters_streets
+							WHERE rk_campaignId = " . (int) $this -> rk_campaignId . "
+							ORDER BY street_name";
+
 			$streetsRaw = $this -> db -> get_results($sql);
-			foreach($streetsRaw as $street){
-				if($street -> active_voters == 0) continue;
-				$streets[] = $street;
-			}
-			return $streets;
+			// $streets = array();
+			// foreach($streetsRaw as $street){
+			// 	// if($street -> active_voters == 0) continue;
+			// 	$streets[] = $street;
+			// }
+			return $streetsRaw;
 		}
 
 
@@ -41,22 +89,32 @@
 
 		// update totals
 		function updateTotals(){
+
 			$streets = $this -> getStreetList();
+
+
 			foreach($streets as $street){
+
 				$sql = 	"SELECT COUNT(*) as total FROM voters " .
-						"where stname1='" . $street -> street_name .
-						"' and active=1";
+								"where stname='" . $this -> db -> escape($street -> street_name) . "'
+						 		 and active=1 and rk_campaignId=" . (int) $this -> rk_campaignId;
+
+				$contact_sql = "SELECT COUNT(*) FROM VOTERS v
+													WHERE stname = '" . $this -> db -> escape($street -> street_name) . "' AND
+													EXISTS (SELECT * FROM VOTERS_CONTACTS c WHERE v.rkid = c.rkid and c.status = 'canvassed') ";
 
 				$street_totals = array(
 					'active_voters' => $this -> db -> get_var($sql),
-					'contacts' => $this -> db -> get_var($sql . ' and (status = 1 or status = 2 or status = 3)'),
-					'supporters' => $this -> db -> get_var($sql . ' and status = 1')
+					'contacts' => $this -> db -> get_var($contact_sql),
+					'supporters' => $this -> db -> get_var($sql . ' and (support_level = 1 or support_level=2)')
 				);
 
 				$this -> db -> update('voters_streets', $street_totals,
-										array('streetid' => $street -> streetid));
+										array('streetid' => (int) $street -> streetid));
 
 			}
+
+			/* TBD */
 
 			$turfs = $this -> getTurfList();
 			foreach($turfs as $turf){
@@ -68,8 +126,8 @@
 
 				$turf_totals = array(
 					'active_voters' => $this -> db -> get_var($sql),
-					'contacts' => $this -> db -> get_var($sql . ' and (status = 1 or status = 2 or status = 3)'),
-					'supporters' => $this -> db -> get_var($sql . ' and v.status = 1')
+					'contacts' => $this -> db -> get_var($sql . ' and (support_level = 1 or support_level = 2 or support_level = 3)'),
+					'supporters' => $this -> db -> get_var($sql . ' and v.support_level = 1')
 				);
 
 				$this -> db -> update('voters_turfs', $turf_totals,
@@ -92,13 +150,13 @@
 
 			$where = array();
 
-			if(isset($status) && $status != '-'){
-				if($status == 0){
-					$where[] = 	'(status=0 or ' .
-								'(status = 2 and (bio LIKE "%vsc%" or bio = "")))';
+			if(isset($support_level) && $support_level != '-'){
+				if($support_level == 0){
+					$where[] = 	'(support_level=0 or ' .
+								'(support_level = 2 and (bio LIKE "%vsc%" or bio = "")))';
 				}
 				else {
-					$where[] = 'status=' . $status;
+					$where[] = 'support_level=' . $support_level;
 				}
 			}
 
@@ -170,7 +228,7 @@
 
 				case 'Need Postcards' :
 					$where[] = 'stnum != 0';
-					$where[] = '(status=1 or status=2)';
+					$where[] = '(support_level=1 or support_level=2)';
 					$where[] = 'bio NOT LIKE "%vsc%" and bio <> ""';
 					$where[] = 'not exists (select * from voters_contacts vc where
 									vc.voterid = voters.voterid and vc.type="Sent Post Card")';
@@ -221,7 +279,7 @@
 					$where[] = 'votedin2011=1';
 					$where[] = 'votedin2013=1';
 					$where[] = 'phone=""';
-					$where[] = 'status=0';
+					$where[] = 'support_level=0';
 
 				break;
 
@@ -323,7 +381,7 @@
 
 		// get local supporter email list
 		function getLocalSupporterEmails(){
-			$sql = 'SELECT email from voters where status=1 and (city="Portland" or city="") and email <> ""';
+			$sql = 'SELECT email from voters where support_level=1 and (city="Portland" or city="") and email <> ""';
 			$list = $this -> db -> get_results($sql);
 			$response = '';
 			foreach($list as $person){
@@ -336,7 +394,7 @@
 		// get mailing list
 		function getMailingList(){
 			$sql = 'SELECT * FROM `voters`
-					WHERE ( STATUS=0 OR STATUS=2 )
+					WHERE ( support_level=0 OR support_level=2 )
 					AND votedin2013=1 ORDER BY stname1,stnum,unit';
 			$list = $this -> db -> get_results($sql);
 
@@ -390,16 +448,28 @@
 		}
 
 		// get person's full record
-		function getFullPerson(){
-			extract($this -> request);
-			$sql = "SELECT * FROM voters WHERE voterid = '$voterid'";
+		function getFullPerson($rkid = false){
+
+			if(!$rkid && isset($this -> request["rkid"])) {
+				$rkid = $this -> request["rkid"];
+			}
+			if(!$rkid) return array("error" => "No rkid requested");
+
+			$rkid = (int) $rkid;
+
+			$sql = "SELECT * FROM voters WHERE rkid = $rkid";
 			$person = (array) $this -> db -> get_row($sql);
+
+			if(count($person) == 0){
+				 return array("error" => "No person found for that rkid.");
+			}
+
 			foreach($person as $k => $v){
 				$person[$k] = stripSlashes($v);
 			}
 
 			// get contacts
-			$sql = "SELECT * FROM voters_contacts WHERE voterid = '$voterid' ORDER BY datetime desc";
+			$sql = "SELECT * FROM voters_contacts WHERE rkid = $rkid ORDER BY datetime desc";
 			//echo $sql;
 			$contactsRaw = $this -> db -> get_results($sql);
 			foreach($contactsRaw as $contact){
@@ -410,7 +480,7 @@
 			// get other people at that number
 			$person['neighbors'] = array();
 			if($person['phone'] != ''){
-				$sql = "SELECT * FROM voters WHERE phone = '" . $person['phone'] . "' and id <> " . $person['id'];
+				$sql = "SELECT * FROM voters WHERE phone = '" . $person['phone'] . "' and rkid <> " . $person['rkid'];
 				//echo $sql;
 				$sameNumber = $this -> db -> get_results($sql);
 				foreach($sameNumber as $contact){
@@ -422,20 +492,20 @@
 
 
 			// get other people at the same address
-			if($person['stname1'] != ''){
-				$sql = 	"SELECT * FROM voters WHERE
-						stnum = '{$person['stnum']}'
-						and stname1 = '{$person['stname1']}'
-						and unit = '{$person['unit']}'
-						and id <> {$person['id']}";
+			if($person['stname'] != ''){
+				$sql = 	"	SELECT * FROM voters WHERE
+									stnum = '{$person['stnum']}'
+									and stname = '{$person['stname']}'
+									and unit = '{$person['unit']}'
+									and rkid <> {$person['rkid']}";
 				//echo $sql;
 
 				$housemates = $this -> db -> get_results($sql);
 				foreach($housemates as $contact){
 					$contact -> bio = stripSlashes($contact -> bio);
 					$contact -> firstname = '(a) ' . $contact -> firstname;
-					if(!$person['neighbors'][$contact -> id]){
-						$person['neighbors'][$contact -> id] = $contact;
+					if(!isset($person['neighbors'][$contact -> rkid])){
+						$person['neighbors'][$contact -> rkid] = $contact;
 					}
 				}
 			}
@@ -449,9 +519,17 @@
 		// create person
 		function addPerson(){
 			extract($this -> request);
-			if(!isset($person['voterid'])) $person['voterid'] = 'new_' . microtime();
-			$this -> db -> insert('voters', $person);
-			return $this -> get_knocklist();
+			if(count($person) == 0){
+				return array("error" => "No person submitted.");
+			}
+			$response = array(
+					"rkid" => $this -> db -> insert('voters', $person)
+			);
+
+			if(isset($type)){
+				$response['knocklist'] = $this -> get_knocklist();
+			}
+			return $response;
 		}
 
 		// update person
@@ -512,7 +590,7 @@
 				}
 			}
 			else {
-				unset($contact['status']);
+				unset($contact['support_level']);
 				$response = $this -> db -> insert('voters_contacts', $contact);
 			}
 
@@ -541,7 +619,7 @@
 			$where = array('voterid' => $voterid);
 			$this -> db -> delete('voters', $where);
 			return array(
-				"status" => "deleted",
+				"support_level" => "deleted",
 				"knocklist" => $this -> get_knocklist()
 			);
 		}
@@ -703,7 +781,7 @@
 
 		// UTILITIES
 		function generateCsv($data){
-			$csv = '';		
+			$csv = '';
 			$keys = array_keys($data[0]);
 			$csv .= implode(',', $keys) . "\n";
 			foreach($data as $row){
@@ -711,6 +789,7 @@
 			}
 			return $csv;
 		}
+
 
 
 	}

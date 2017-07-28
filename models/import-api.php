@@ -1,11 +1,11 @@
 <?php
 
-  
+
   // data handling methods
 
   // PROCESS VOTER FILE
   function updateVotersFromFile($voter_file, $campaignId){
-  
+
     // read voter file
     $voters = _readVoterFile($voter_file, $campaignId);
     //echo count($voters) . " rows to import";
@@ -14,6 +14,9 @@
     foreach($voters as $k => $row){
       $rkdb -> updateOrCreate('voters', $row, array('vanid' => $row['vanid']));
     }
+
+    // once the voters are in, load the streets for them
+    _processStreets($campaignId);
   }
 
   function _readVoterFile($voter_file, $campaignId){
@@ -22,10 +25,10 @@
     include("data/van_rkvoters_hash.php");
 
     // read voter file into memory
-    $votersRaw = readFileAsCSV($voter_file); 
-      // array(  //"StreetNoHalf", "StreetPrefix", "StreetSuffix", "StreetType", "AptType", 
+    $votersRaw = readFileAsCSV($voter_file);
+      // array(  //"StreetNoHalf", "StreetPrefix", "StreetSuffix", "StreetType", "AptType",
       //         "General16", "General15", "General14", "General13", "General12",
-      //         "Primary16", "Primary14"), 
+      //         "Primary16", "Primary14"),
       // 'Voter File VANID');
 
 
@@ -57,7 +60,7 @@
       }
 
       $row["rk_campaignid"] = $campaignId;
-      
+
 
       extract($voter_raw);
 
@@ -65,14 +68,20 @@
       // stname    = StreetPrefix . StreetName . StreetType . StreetSuffix
       // unit      = AptType . AptNo
       $row["stnum"]   = $StreetNo . $StreetNoHalf;
-      
-      $row['stname']  = makeString( $voter_raw, 
+
+      $row['stname']  = makeString( $voter_raw,
                                     array('StreetPrefix', 'StreetName', 'StreetType', 'StreetSuffix'));
-      
+
       $unit  =  $AptType;
       $unit .= ($unit != '' && $unit != '#') ? ' ' . $AptNo : $AptNo;
       $row['unit'] = $unit;
 
+
+      // IS THE PERSON "ACTIVE"?
+      //
+      // UPDATE VOTERS
+      // SET active=1
+      // WHERE General15 != "" OR General13 != ""
 
       $data[] = $row;
     }
@@ -80,6 +89,20 @@
     return $data;
   }
 
+  function _processStreets($campaignId){
+    	global $rkdb;
+
+    	$sql =  "SELECT DISTINCT(stname) as street_name FROM voters " .
+              "WHERE rk_campaignId=" . (int) $campaignId . " ORDER BY stname";
+
+    	$streets = $rkdb -> get_results($sql);
+
+    	foreach($streets as $street){
+    		$s['street_name'] = $street -> street_name;
+        $s['rk_campaignId'] = $campaignId;
+    		$rkdb -> getOrCreate('voters_streets', $s, $s);
+    	}
+  }
 
 
   // PROCESS CONTACTS
@@ -92,7 +115,7 @@
   }
 
   function _readContactsFile($contacts_file, $campaignId){
-    
+
     // read voter file into memory
     $contactsRaw = readFileAsCSV($contacts_file);
 
@@ -131,10 +154,10 @@
     $survey_responses = _readSurveyFile($survey_file, $campaignId);
 
     foreach($survey_responses as $response){
-      
+
       if($response['type'] == 'Support'){
-        $rkdb -> update(  "voters", 
-                          array("support_level" => $response['support_level']), 
+        $rkdb -> update(  "voters",
+                          array("support_level" => $response['support_level']),
                           array("rkid" => $response['rkid']));
 
         $rkdb -> update(  "voters_contacts",
@@ -143,8 +166,8 @@
       }
 
       if($response['type'] == 'LawnSign' && $response['support_level'] == "Yes"){
-        $rkdb -> update(  "voters", 
-                          array("LawnSign" => "1"), 
+        $rkdb -> update(  "voters",
+                          array("LawnSign" => "1"),
                           array("rkid" => $response['rkid']));
 
         $contact = array(
@@ -157,20 +180,20 @@
 
 
         $rkdb -> insert(  "voters_contacts", $contact);
-                          
+
       }
 
     }
   }
 
   function _readSurveyFile($survey_file, $campaignId){
-    
+
     // read survey file into memory
     $surveyRaw = readFileAsCSV($survey_file);
     $survey_responses = array();
 
     foreach($surveyRaw as $row){
-      
+
       $rkid = get_rkid_from_vanid($row['Voter File VANID'], $campaignId);
 
       $type = "Unknown";
@@ -179,10 +202,10 @@
 
       if(strpos($row['SurveyQuestionLongName'], 'LawnSign') !== false){
         $type = "LawnSign";
-      } 
+      }
 
       if($type == "Unknown") {
-        echo "question unidentifiable:"; 
+        echo "question unidentifiable:";
         print_r($row);
       }
 
@@ -199,6 +222,9 @@
 
     return $survey_responses;
   }
+
+
+
 
 
 
@@ -235,14 +261,14 @@
       // compile a list of unique values ()
       foreach($unique_fields as $u){
         if($rowData[$u] != ''){
-          $uniques[$u][$rowData[$u]] = $rowData[$primaryKey];  
+          $uniques[$u][$rowData[$u]] = $rowData[$primaryKey];
         }
 
-        
+
       }
 
       $data[] = $rowData;
-      
+
     }
 
     if(count($uniques) > 0) print_r($uniques);
@@ -258,5 +284,3 @@
     }
     return implode(' ', $strs);
   }
-
-

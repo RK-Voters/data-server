@@ -29,5 +29,7 @@
 	// updateVotersFromSurvey($survey_file, $campaignId);
 
 
+	_processStreets($campaignId);
+
 
 	echo "\n\n\nfinish!";
