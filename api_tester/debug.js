@@ -6,6 +6,8 @@ function postWithAjax(myajax) {
 	myajax = myajax || {};
 	myajax.url = "../api.php";
 	myajax.type = "post";
+	myajax.contentType = 'application/json; charset=utf-8';
+    myajax.dataType = 'json';
 
 	myajax.complete = function(jqXHR) {
 		$("#statuspre").text(
