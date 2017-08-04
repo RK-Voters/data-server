@@ -170,10 +170,20 @@
 		}
 
 
-		// delete
+		// delete - maybe we shouldn't even have this?
+		// will only work if there's at least one term in the where clause and it's an integer
 		function delete($table, $where){
 			$sql = "DELETE FROM $table WHERE ";
-			foreach($obj as $k => $v) $where[] = $k . '=' . (int) $v;
+
+			if(count($where) == 0) exit("Tried to do a bad delete.");
+
+			foreach($where as $k => $v) {
+				$v = (int) $v;
+				if(!is_int($v)) exit("Tried to do a bad delete.");
+
+				$where[] = $k . '=' . $v;
+			}
+
 			$sql .= implode(' AND ', $where);
 
 			//echo $sql;

@@ -78,13 +78,13 @@
 			return $this -> db -> get_rowFromObj("users", array("userId" => $userId));
 		}
 
-/****************************************************************
-*	STREETS & TURFS
-*	- getStreetList()
-* - getTurfList()
-* - updateTurfAssignment()
-* - updateTotals()
-****************************************************************/
+		/****************************************************************
+		*	STREETS & TURFS
+		*	- getStreetList()
+		* - getTurfList()
+		* - updateTurfAssignment()
+		* - updateTotals()
+		****************************************************************/
 
 		// get list of available streets
 		function getStreetList(){
@@ -177,7 +177,8 @@
 
 		// get list of people by search criteria
 		function get_knocklist(){
-			extract($this -> request['listRequest']);
+
+			extract((array) $this -> request['listRequest']);
 
 			$limit = ' LIMIT 500';
 
@@ -198,7 +199,7 @@
 			}
 
 
-			if($street_name != 'Select Street...') $where[] = "stname1 = '$street_name'";
+			if($street_name != 'Select Street...') $where[] = "stname = '$street_name'";
 			if($stnum) $where[] = "stnum = '$stnum'";
 
 			if($search_str != '') {
@@ -221,7 +222,7 @@
 
 				case 'Donors' :
 					$where[] = "EXISTS(SELECT * from voters_contacts where
-									voters.voterid=voters_contacts.voterid
+									voters.rkid=voters_contacts.rkid
 									and voters_contacts.type='Donation')";
 				break;
 
@@ -240,7 +241,7 @@
 				case 'Phones - Not Called' :
 					$where[] = 'phone <> ""';
 					$where[] = 'not exists (select * from voters_contacts vc where
-									vc.voterid = voters.voterid and vc.type="Phone Call")';
+									vc.rkid = voters.rkid and vc.type="Phone Call")';
 					$limit = '';
 				break;
 
@@ -248,14 +249,14 @@
 					$where[] = 'phoneType = ""';
 					$where[] = 'phone <> ""';
 					$where[] = 'not exists (select * from voters_contacts vc where
-									vc.voterid = voters.voterid and vc.type="Phone Call")';
+									vc.rkid = voters.rkid and vc.type="Phone Call")';
 					$limit = '';
 				break;
 
 				case 'Phones - Called' :
 					$where[] = 'phone <> ""';
 					$where[] = ' exists (select * from voters_contacts vc where
-									vc.voterid = voters.voterid and vc.type="Phone Call")';
+									vc.rkid = voters.rkid and vc.type="Phone Call")';
 					$limit = '';
 				break;
 
@@ -264,19 +265,19 @@
 					$where[] = '(support_level=1 or support_level=2)';
 					$where[] = 'bio NOT LIKE "%vsc%" and bio <> ""';
 					$where[] = 'not exists (select * from voters_contacts vc where
-									vc.voterid = voters.voterid and vc.type="Sent Post Card")';
+									vc.rkid = voters.rkid and vc.type="Sent Post Card")';
 				break;
 
 				case 'Sent Postcards' :
 					$limit = '';
 					$where[] = ' exists (select * from voters_contacts vc where
-									vc.voterid = voters.voterid and vc.type="Sent Post Card")';
+									vc.rkid = voters.rkid and vc.type="Sent Post Card")';
 				break;
 
 				case 'Seniors - Phones - Not Called' :
 					$limit = '';
 					$where[] = 'not exists (select * from voters_contacts vc where
-									vc.voterid = voters.voterid and vc.type="Phone Call")';
+									vc.rkid = voters.rkid and vc.type="Phone Call")';
 					$where[] = 'phone <> ""';
 					$where[] = 'yob < 1950';
 					$where[] = 'yob <> 0';
@@ -292,7 +293,7 @@
 
 				case 'Active Under 35' :
 					$limit = '';
-					$where[] = 'yob > 1980';
+					$where[] = 'dob > 1982';
 					$where[] = 'active=1';
 					$where[] = 'votedin2011=1';
 					$where[] = 'votedin2013=1';
@@ -323,14 +324,12 @@
 
 			}
 
-
 			if(count($where) == 0) return array();
 
 			$sql = "SELECT * FROM voters
 					WHERE " . implode(' and ', $where) .
-					" ORDER BY stname1, stnum, unit, lastname" . $limit;
+					" ORDER BY stname, stnum, unit, lastname" . $limit;
 
-			//echo $sql;
 
 			$knocklist = $this -> db -> get_results($sql);
 			foreach($knocklist as $index => $person){
@@ -389,9 +388,9 @@
 
 			// get everybody who has a postcard that needs to be sent
 			$sql = 'select * from voters v where
-					exists (select * from voters_contacts vc where vc.voterid = v.voterid and vc.type="Post Card")
+					exists (select * from voters_contacts vc where vc.rkid = v.rkid and vc.type="Post Card")
 					and
-					not exists (select * from voters_contacts vc where vc.voterid = v.voterid and vc.type="Sent Post Card")';
+					not exists (select * from voters_contacts vc where vc.rkid = v.rkid and vc.type="Sent Post Card")';
 
 			$recipients = $this -> db -> get_results($sql);
 
@@ -399,7 +398,7 @@
 				$contact = array(
 					'datetime' => date("Y-m-d H:i:s"),
 					'type' => 'Sent Post Card',
-					'voterid' => $recipient -> voterid
+					'rkid' => $recipient -> rkid
 				);
 
 				$response = $this -> db -> insert('voters_contacts', $contact);
@@ -483,28 +482,34 @@
 		// get person's full record
 		function getFullPerson($rkid = false){
 
+			// get rkid
 			if(!$rkid && isset($this -> request["rkid"])) {
 				$rkid = $this -> request["rkid"];
 			}
 			if(!$rkid) return array("error" => "No rkid requested");
-
 			$rkid = (int) $rkid;
 
+
+			// get person from voters table
 			$sql = "SELECT * FROM voters WHERE rkid = $rkid";
 			$person = (array) $this -> db -> get_row($sql);
-
 			if(count($person) == 0){
 				 return array("error" => "No person found for that rkid.");
 			}
 
+			// remove slashes from data response (is this necessary? here?)
 			foreach($person as $k => $v){
 				$person[$k] = stripSlashes($v);
 			}
 
+
 			// get contacts
-			$sql = "SELECT * FROM voters_contacts WHERE rkid = $rkid ORDER BY datetime desc";
-			//echo $sql;
+			$sql = "SELECT * FROM voters_contacts, users
+							WHERE voters_contacts.rkid = $rkid AND voters_contacts.userId = users.userId
+							ORDER BY datetime desc";
 			$contactsRaw = $this -> db -> get_results($sql);
+
+			// process contacts
 			foreach($contactsRaw as $contact){
 				$contact -> note = stripSlashes($contact -> note);
 				$person['contacts'][] = $contact;
@@ -568,8 +573,9 @@
 		// update person
 		function updatePerson(){
 			extract($this -> request);
-			$where = array('voterid' => $voterid);
-			$update = $person;
+			$where = array('rkid' => $rkid);
+			$update = (array) $person;
+
 			unset($update['address']);
 			unset($update['age']);
 			unset($update['contacts']);
@@ -590,7 +596,7 @@
 			*/
 
 
-			return $this -> getFullPerson($person['voterid']);
+			return $this -> getFullPerson($person -> rkid);
 		}
 
 
@@ -599,6 +605,9 @@
 
 
 			extract($this -> request);
+			$contact = (array) $contact;
+			$person = (array) $person;
+
 			if(!isset($contact['datetime']) || $contact['datetime'] == ''){
 				$contact['datetime'] = date("Y-m-d H:i:s");
 			}
@@ -607,10 +616,10 @@
 				$contact['datetime'] = date("Y-m-d H:i:s", $datetime);
 			}
 
-			$user = wp_get_current_user();
-			$contact['agent'] = $user -> user_login;
+			$contact['userId'] = $this -> user -> userId;
 
 
+			// if you made a phone call, record it for others with the same number
 			if($contact['type'] == 'Phone Call' && $person['phone'] != '') {
 
 				$sql = "SELECT * FROM voters WHERE phone = '" . $person['phone'] . "'";
@@ -618,12 +627,14 @@
 				//$this -> request['person']['callcount']++;
 
 				foreach($sameNumber as $target){
-					$contact['voterid'] = $target -> voterid;
+					$contact['rkid'] = $target -> rkid;
 					$response = $this -> db -> insert('voters_contacts', $contact);
 				}
 			}
+
+			// if not, just record the contact for the person targetted
 			else {
-				unset($contact['support_level']);
+				$contact['support_level'];
 				$response = $this -> db -> insert('voters_contacts', $contact);
 			}
 
@@ -631,10 +642,8 @@
 
 
 
-//			print_r($contact);
-//			$this -> outputError();
 
-			return $this -> getFullPerson($person['voterid']);
+			return $this -> getFullPerson($person['rkid']);
 		}
 
 		// delete contact
@@ -642,17 +651,17 @@
 			extract($this -> request);
 			$where = array('vc_id' => $vc_id);
 			$this -> db -> delete( 'voters_contacts', $where);
-			return $this -> getFullPerson($voterid);
+			return $this -> getFullPerson($rkid);
 		}
 
 
 		// remove person
 		function removePerson(){
 			extract($this -> request);
-			$where = array('voterid' => $voterid);
+			$where = array('rkid' => $rkid);
 			$this -> db -> delete('voters', $where);
 			return array(
-				"support_level" => "deleted",
+				"status" => "deleted",
 				"knocklist" => $this -> get_knocklist()
 			);
 		}
@@ -670,9 +679,9 @@
 				$datestr = date("Y-m-d H:i:s");
 			}
 
-			foreach($voterids as $vid){
+			foreach($rkids as $vid){
 				$contact['datetime'] = $datestr;
-				$contact['voterid'] = $vid;
+				$contact['rkid'] = $vid;
 				$contact['type'] = 'Lit Drop';
 				$this -> db -> insert('voters_contacts', $contact);
 			}
@@ -692,9 +701,9 @@
 
 		// get donations
 		function getDonations(){
-			$sql = 'SELECT v.firstname, v.lastname, v.voterid, v.id, vc.amount, v.city, vc.datetime
+			$sql = 'SELECT v.firstname, v.lastname, v.rkid, v.id, vc.amount, v.city, vc.datetime
 					FROM voters v
-					INNER JOIN voters_contacts vc ON v.voterid = vc.voterid
+					INNER JOIN voters_contacts vc ON v.rkid = vc.rkid
 					WHERE vc.type = "Donation"
 					ORDER BY vc.datetime';
 
@@ -736,7 +745,7 @@
 			$sql = 'SELECT v.*,
 					vc.amount, v.city, vc.datetime
 					FROM voters v
-					INNER JOIN voters_contacts vc ON v.voterid = vc.voterid
+					INNER JOIN voters_contacts vc ON v.rkid = vc.rkid
 					WHERE vc.type = "Donation"
 					ORDER BY vc.datetime';
 
