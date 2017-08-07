@@ -29,7 +29,12 @@
 	// updateVotersFromSurvey($survey_file, $campaignId);
 
 
-	_processStreets($campaignId);
+//	_processStreets($campaignId);
+
+	echo getAllVotersInCampaign($campaignId);
+	exit;
+
+	geoCodeCampaign($campaignId);
 
 
 	echo "\n\n\nfinish!";

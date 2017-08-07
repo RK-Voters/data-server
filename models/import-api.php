@@ -59,7 +59,7 @@
         $row[$rk_field] = $v;
       }
 
-      $row["rk_campaignid"] = $campaignId;
+      $row["campaignId"] = $campaignId;
 
 
       extract($voter_raw);
@@ -93,17 +93,74 @@
     	global $rkdb;
 
     	$sql =  "SELECT DISTINCT(stname) as street_name FROM voters " .
-              "WHERE rk_campaignId=" . (int) $campaignId . " ORDER BY stname";
+              "WHERE campaignId=" . (int) $campaignId . " ORDER BY stname";
 
     	$streets = $rkdb -> get_results($sql);
 
     	foreach($streets as $street){
     		$s['street_name'] = $street -> street_name;
-        $s['rk_campaignId'] = $campaignId;
+        $s['campaignId'] = $campaignId;
     		$rkdb -> getOrCreate('voters_streets', $s, $s);
     	}
   }
 
+  function geoCodeVoter($rkid){
+    global $rkdb;
+    $sql = "SELECT * FROM voters WHERE rkid=" . (int) $rkid;
+
+    $voter = $rkdb -> get_row($sql);
+
+    print_R($voter);
+
+    // if lattitude is already set, continue
+    if($voter -> lat != 0) {
+      return $voter;
+    }
+
+    echo "calculating";
+
+    $address = $voter -> address1 . ", " . $voter -> city . ", " . $voter -> state . " " . $voter -> zip;
+
+    $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' .
+            urlencode($address) .
+            '&key=%20AIzaSyCZlSd7CYYktdeZIeELO0dmIZfp-Ca5vZA';
+
+    $addr_data = json_decode(file_get_contents($url));
+
+    $location = (array) $addr_data -> results[0] -> geometry -> location;
+
+		$address_components = $addr_data -> results[0] -> address_components;
+
+		$neighborhoodName = "";
+		foreach($address_components as $c){
+			if($c -> types[0] == 'neighborhood'){
+				$neighborhoodName = $c -> long_name;
+				break;
+			}
+		}
+
+    $update = array(
+      "lat" => $location['lat'],
+      "lon" => $location['lng'],
+      "google_neighborhood" => $neighborhoodName
+    );
+
+    $where = array(
+      "rkid" => $voter -> rkid
+    );
+
+    $rkdb -> update("voters", $update, $where);
+
+    return $update;
+
+  }
+
+  function getAllVotersInCampaign($campaignId){
+    global $rkdb;
+    $sql = "SELECT rkid, lat from VOTERS where campaignId=" . (int) $campaignId;
+    $rkids = $rkdb -> get_results($sql);
+    exit(json_encode($rkids));
+  }
 
   // PROCESS CONTACTS
   function inputContactsFromFile($contacts_file, $campaignId){
@@ -231,7 +288,7 @@
   // GET RK ID FROM VAN ID
   function get_rkid_from_vanid($vanid, $campaignId){
     global $rkdb;
-    $sql = 'SELECT rkid from voters where vanid=' . (int) $vanid . ' and rk_campaignid=' . (int) $campaignId;
+    $sql = 'SELECT rkid from voters where vanid=' . (int) $vanid . ' and campaignId=' . (int) $campaignId;
     return $rkdb -> get_var($sql);
   }
 

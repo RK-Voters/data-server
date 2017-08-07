@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <script src="rkvoters_list.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+      .headline {
+        text-align: center;
+        font-family: sans-serif;
+        font-style: italic;
+        margin-top: 100px;
+      }
+      .statusBarFrame {
+        border: solid 1px #ccc;
+        margin: 10px auto;
+        height: 40px;
+        width: 400px;
+        border-radius: 4px;
+      }
+      #statusBar {
+        height: 40px;
+        background: red;
+        width: 75px;
+      }
+    </style>
+    <script>
+      var voterIndex = 0;
+
+      $(function(){
+        var listLength = votersList.length + 1;
+        $('#listLength').html(listLength);
+        $('#index').html(voterIndex);
+      });
+
+      function processVoter(voterIndex){
+
+        $('#index').html(voterIndex);
+        var percentCompleted = 100 * (voterIndex / votersList.length);
+        $('#statusBar').css('width', percentCompleted + "%");
+
+        if(voterIndex == votersList.length) return;
+
+        var voter = votersList[voterIndex];
+
+        if(voter.lat != 0){
+          voterIndex++;
+          processVoter(voterIndex);
+        }
+
+        else {
+          $.get('geocode.php?rkid=' + voter.rkid, function(response){
+            voterIndex++;
+            // processVoter(voterIndex);
+          });
+        }
+
+      }
+    </script>
+  </head>
+  <body>
+
+    <div class="headline">
+      Processing <span id="index"></span> of <span id="listLength"></span>
+    </div>
+    <div style="text-align: center; margin: 20px">
+      <button onclick="processVoter(0)" >Go!</button>
+    </div>
+
+    <div class="statusBarFrame">
+      <div id="statusBar" style="width: 0%"></div>
+    </div>
+  </body>
+</html>
