@@ -41,6 +41,8 @@
     "General13" => "General13",
     "General12" => "General12",
     "Primary16" => "Primary16",
-    "Primary14" => "Primary14"
+    "Primary14" => "Primary14",
+
+    "NoteText"  => "Bio"
 
   );

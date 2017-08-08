@@ -14,9 +14,12 @@ License: GPLv2 or later
 Text Domain: crowdfolio
 */
 
+header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Headers: X-Requested-With, content-type, access-control-allow-origin, access-control-allow-methods, access-control-allow-headers');
+
 
 include('config.php');
-include('models/rkvoters-api.php');
+include('models/rkvoters_model.php');
 
 // load API model (reads request in constructor)
 $data_model = new RKVoters_Model();
@@ -24,7 +27,7 @@ $request 		= $data_model -> request;
 
 
 // access token shit goes here (placeholder for now)
-$data_model -> rk_campaignId = 1;
+$data_model -> campaignId = 1;
 
 
 
@@ -46,37 +49,5 @@ if(isset($request['api'])){
 }
 
 
-// handle csv export request
-if(isset($request['export'])){
-	header("Content-Type: text/csv");
-	header("Content-Disposition: attachment; filename=\"Contacts.csv\"");
-
-	// export emails
-	if($request['export'] == 'emails'){
-		$contacts = $data_model -> getContactsWithEmails();
-		echo $data_model -> generate_csv($contacts);
-		exit;
-	}
-
-	// export mailing list
-	if($request['export'] == 'mailinglist'){
-		$contacts = $data_model -> getMailingList();
-
-		echo "Name; Address 1; Address 2 \n";
-		foreach($contacts as $k => $contact){
-			echo "Everybody at; " . $contact['addr1'] . '; ' . $contact['addr2'] . "\n";
-		}
-		exit;
-	}
-
-
-	// export donors
-	if($request['export'] == 'donors'){
-		$contacts = $data_model -> exportDonations();
-		echo $data_model -> generate_csv($contacts);
-		exit;
-	}
-
-}
 
 echo json_encode(array("error" => "No API or EXPORT requested."));

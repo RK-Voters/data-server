@@ -1,40 +1,66 @@
 <?php
 
 	set_time_limit(0);
-	header('Content-Type: text/plain');
+	// header('Content-Type: text/plain');
 
 
 	// load data handler
 	include("config.php");
-	include("models/import-api.php");
-
-	$campaignId = 1;
+	include("models/import_model.php");
 
 
-	// load voters
-	// $voter_file = 'data/joey/voters.txt';
-	// updateVotersFromFile($voter_file, $campaignId);
+	// authentication here...
 
 
+	// read request
+	$filetype 	= (isset($_POST['uploaded_filetype'])) ? $_POST['uploaded_filetype'] : false;
+	$filepath 	= (isset($_FILES['uploaded_file'])) ? $_FILES['uploaded_file']['tmp_name'] : false;
 
 
-	// load contacts
-	// $contacts_file = 'data/joey/contacts.txt';
-	// inputContactsFromFile($contacts_file, $campaignId);
+	// process api
+	if($filetype && $filepath) {
+		$importModel = new RKVoters_ImportModel();
+
+		// pass from primary model
+		$importModel -> campaignId = 1;
+
+		echo json_encode($importModel -> run($filetype, $filepath));
+
+	}
+
+?>
+<html>
+	<head>
+	</head>
+	<body style="text-align: center; padding-top: 100px; font-family: sans-serif; font-size: 12px; line-height: 18px;">
+		<h2>Upload File</h2>
+
+		<form action="" method="post" enctype="multipart/form-data">
+
+			<b>Campaign Id:</b>
+			<br /><input name="campaignId" />
+
+			<br /><br /><br />
+
+			<b>File Type:</b>
+			<br />
+			<select name="uploaded_filetype">
+					<option>Voter File</option>
+					<option>VAN Contacts</option>
+					<option>VAN Survey</option>
+			</select>
+
+			<br /><br /><br />
+
+			<b>File:</b>
+			<br /><input type="file" name="uploaded_file" />
+
+			<br /><br /><br />
+
+			<input type="submit" value="IMPORT!" />
+
+		</form>
 
 
-
-	// load supports
-	$survey_file = 'data/joey/survey.txt';
-	// updateVotersFromSurvey($survey_file, $campaignId);
-
-
-//	_processStreets($campaignId);
-
-	echo getAllVotersInCampaign($campaignId);
-	exit;
-
-	geoCodeCampaign($campaignId);
-
-
-	echo "\n\n\nfinish!";
+	</body>
+</html>

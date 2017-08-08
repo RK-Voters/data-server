@@ -12,8 +12,6 @@
 			global $rkdb;
 			$this -> db = $rkdb;
 
-			$this -> rk_campaignId = 1;
-
 
 			// load request
 			$this -> request = $this -> _loadRequest();
@@ -65,7 +63,7 @@
 
 
 			// what campaign is this access token for?
-			$this -> rk_campaignId = $auth -> rk_campaignId;
+			$this -> campaignId = $auth -> campaignId;
 
 
 			// get the user
@@ -89,7 +87,7 @@
 		// get list of available streets
 		function getStreetList(){
 			$sql = "SELECT * from voters_streets
-							WHERE rk_campaignId = " . (int) $this -> rk_campaignId . "
+							WHERE campaignId = " . (int) $this -> campaignId . "
 							ORDER BY street_name";
 
 			$streetsRaw = $this -> db -> get_results($sql);
@@ -130,7 +128,7 @@
 
 				$sql = 	"SELECT COUNT(*) as total FROM voters " .
 								"where stname='" . $this -> db -> escape($street -> street_name) . "'
-						 		 and active=1 and rk_campaignId=" . (int) $this -> rk_campaignId;
+						 		 and active=1 and campaignId=" . (int) $this -> campaignId;
 
 				$contact_sql = "SELECT COUNT(*) FROM VOTERS v
 													WHERE stname = '" . $this -> db -> escape($street -> street_name) . "' AND
