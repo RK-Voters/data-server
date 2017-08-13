@@ -6,6 +6,8 @@ Class RKVoters_NationbuilderImportModel {
     global $rkdb;
     $this -> db = $rkdb;
 
+    $this -> greenlight = false;
+
     $this -> fieldHash = array(
 
       // foreign primary key to nationbuilder
@@ -137,8 +139,13 @@ Class RKVoters_NationbuilderImportModel {
     if(!is_numeric($nbid)) exit("Bad NBID");
     $nbid = (int) $nbid;
 
+    if($this -> greenlight){
+        $this -> db -> updateOrCreate('voters', $rkvoter_row, array('nbid' => $nbid));
+    }
+    else {
+      if($nbid == "2254552") $this -> greenlight = true;
+    }
 
-    $this -> db -> updateOrCreate('voters', $rkvoter_row, array('nbid' => $nbid));
 
   }
 
