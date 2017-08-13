@@ -19,7 +19,17 @@
 
 	// process api
 	if($filetype && $filepath) {
-		$importModel = new RKVoters_ImportModel();
+
+		// is it a VAN File?
+		$vanFileTypes = array("VAN Voter File", "VAN Contacts", "VAN Survey");
+		if(in_array($filetype, $vanFileTypes)){
+				$importModel = new RKVoters_VanImportModel();
+		}
+		else {
+			$importModel = new RKVoters_NationbuilderImportModel();
+		}
+
+
 
 		// pass from primary model
 		$importModel -> campaignId = 1;
@@ -45,7 +55,7 @@
 			<b>File Type:</b>
 			<br />
 			<select name="uploaded_filetype">
-					<option>Voter File</option>
+					<option>VAN Voter File</option>
 					<option>VAN Contacts</option>
 					<option>VAN Survey</option>
 			</select>
