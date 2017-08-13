@@ -52,23 +52,37 @@
 
 		function _handleLogin(){
 
+			extract($this -> request);
+
 			// is there an access token?
-			if(!isset($this -> request['access_token'])){
-				handleError("Please provide an access token.");
+			if(!isset($access_token) || $access_token == '' || !isset($campaign_slug) || $access_token == ''){
+				handleError("Please provide an access token and a campaign slug.");
 			}
 
 			// look up access token
-			$auth = $this -> db -> get_rowFromObj("user_access", array("access_token" => $this -> request['access_token']));
-			if(count($auth) == 0) handleError("Invalid access token.");
+			$user = $this -> db -> get_rowFromObj("users", array("access_token" => $access_token));
+			if(count($user) == 0) handleError("Invalid access token.");
 
 
 			// what campaign is this access token for?
-			$this -> campaignId = $auth -> campaignId;
+			$campaign = $this -> db -> get_rowFromObj("campaigns", array("campaignSlug" => $campaign_slug));
+			if(count($campaign) == 0) handleError("Invalid campaign slug.");
 
 
-			// get the user
-			$this -> user = $this -> getUserById($auth -> userId);
-			if(count($this -> user) == 0)  handleError("Access token is good, but user not found.");
+			$where = array(
+				"userId" => $user -> userId,
+				"campaignId" => $campaign -> campaignId
+			);
+			$access = $this -> db -> get_rowFromObj("user_access", $where);
+
+			if(count($access) != 1) handleError("Uh oh. Looks like you don't have access to that campaign");
+
+
+			// set the campaign id
+			$this -> campaignId = $campaign -> campaignId;
+
+			// set the user
+			$this -> user = $user;
 
 		}
 
@@ -89,6 +103,7 @@
 			$sql = "SELECT * from voters_streets
 							WHERE campaignId = " . (int) $this -> campaignId . "
 							ORDER BY street_name";
+
 
 			$streetsRaw = $this -> db -> get_results($sql);
 			// $streets = array();

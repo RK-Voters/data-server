@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
 /**
 * @package RK VOTERS
 */
@@ -18,16 +21,12 @@ header("Access-Control-Allow-Origin: *");
 header('Access-Control-Allow-Headers: X-Requested-With, content-type, access-control-allow-origin, access-control-allow-methods, access-control-allow-headers');
 
 
-include('config.php');
-include('models/rkvoters_model.php');
+include('../rk-config.php');
+include('../models/model-app.php');
 
-// load API model (reads request in constructor)
+// load API model (reads request and handles login in constructor)
 $data_model = new RKVoters_Model();
 $request 		= $data_model -> request;
-
-
-// access token shit goes here (placeholder for now)
-$data_model -> campaignId = 1;
 
 
 
