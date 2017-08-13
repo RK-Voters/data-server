@@ -133,11 +133,12 @@ Class RKVoters_NationbuilderImportModel {
 
 
     // and write to the database
+    $nbid = $rkvoter_row['nbid'];
     if(!is_numeric($nbid)) exit("Bad NBID");
-    $nbid = (int) $rkvoter_row['nbid'];
+    $nbid = (int) $nbid;
 
 
-    $this -> db -> updateOrCreate('voters', $rkvoter_row, array('nbid' => $rkvoter_row['nbid']));
+    $this -> db -> updateOrCreate('voters', $rkvoter_row, array('nbid' => $nbid));
 
   }
 
