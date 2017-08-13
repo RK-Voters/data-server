@@ -19,7 +19,8 @@
 
 
 		function run_query($sql){
-			if ($this -> conn -> query($sql) !== TRUE) {
+			$response =  $this -> conn -> query($sql);
+			if (!$response) {
 
 				// $error_str = 	"Error: " . $this -> conn->error .
 				// 							$this -> linebreak . $this -> linebreak . $sql .
@@ -31,6 +32,7 @@
 				echo json_encode(array("error" => $this -> conn -> error));
 				exit;
 			}
+			return $response;
 		}
 
 
@@ -58,12 +60,12 @@
     // GETTERS
 
     function get_var($sql){
-			 $result = $this -> conn -> query($sql);
+			 $result = $this -> run_query($sql);
 			 return $result ? $result -> fetch_array()[0] : false;
 		}
 
 		function get_row($sql){
-			$result = $this -> conn -> query($sql);
+			$result = $this -> run_query($sql);
 			return ($result) ? $result -> fetch_object() : array();
 		}
 
@@ -77,7 +79,7 @@
 		}
 
 		function get_results($sql){
-			$result = $this -> conn -> query($sql);
+			$result = $this -> run_query($sql);
 			if(!$result) return array();
 
 			while($response[] = $result -> fetch_object());
@@ -88,6 +90,21 @@
 
 
     // SETTERS
+		function _countWhereStr($table, $where){
+
+			// where string
+			if(count($where) == 0) exit("Missing WHERE.");
+			foreach($where as $k => $v) {
+				if(!is_numeric($v) || $v == 0) exit("Bad WHERE: $k => $v");
+				$whereTerms[] = $k . '=' . (int) $v;
+			}
+			$whereStr = implode(' AND ', $whereTerms);
+
+			// look for it?
+			$sql = "SELECT COUNT(*) FROM $table WHERE " . $whereStr;
+			$count = $this -> get_var($sql);
+			return $count;
+		}
 
 		function update($table, $obj, $where){
 			$input = (array) $obj;
@@ -99,11 +116,14 @@
 			}
 			$sql .= ' SET ' . implode(',', $params);
 
+			$count = $this -> _countWhereStr($table, $where);
+			if($count  != 1) exit("Tried to update $count rows.");
 
 			foreach($where as $k => $v){
 				$whereStrs[] = $k . "='" . $this -> escape($v) . "'";
 			}
 			$sql .= ' WHERE ' . implode(' AND ', $whereStrs);
+
 
 			// run query
 			if($this -> debugMode) echo $sql . $this -> _linebreak();
@@ -138,20 +158,20 @@
 
 		function updateOrCreate($table, $update, $where){
 
-			// look for it?
-			$row = $this -> get_rowFromObj($table, $where);
+			$count = $this -> _countWhereStr($table, $where);
 
 			// if it's not there, add it!
-			if(count($row) == 0){
+			if($count == 0){
 				$newObject = $update;
-				foreach($where as $k => $v) $newObject[$k] = $v;
 				$this -> insert($table, $newObject);
 			}
 
-			// otherwise, update it
-			else {
+			// if it is, update it
+			else if($count == 1) {
 				$this -> update($table, $update, $where);
 			}
+
+			return $this -> get_rowFromObj($table, $where);
 
 		}
 
@@ -175,15 +195,11 @@
 		function delete($table, $where){
 			$sql = "DELETE FROM $table WHERE ";
 
-			if(count($where) == 0) exit("Tried to do a bad delete.");
+			if($this -> _countWhereStr($table, $where) != 1) exit("Tried to delete $count rows");
 
 			foreach($where as $k => $v) {
-				$v = (int) $v;
-				if(!is_int($v)) exit("Tried to do a bad delete.");
-
 				$where[] = $k . '=' . $v;
 			}
-
 			$sql .= implode(' AND ', $where);
 
 			//echo $sql;

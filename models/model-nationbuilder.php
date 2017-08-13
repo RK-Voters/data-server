@@ -65,48 +65,16 @@ Class RKVoters_NationbuilderImportModel {
     );
   }
 
-// "nbvf.csv"
-
   function importVoterFile($voter_file, $fieldsToDisplay = array()){
+    $options = array(
+      // "fieldsToDisplay" => array("election_at", "ballot_vote_method"),
+      //  "maxRows" => 4
+    );
+    runFileLineByLine($voter_file, $this, "writeVoterToDatabase", $options);
 
-    $handle = fopen($voter_file, "r");
-
-    if ($handle) {
-      $i=0;
-      while (($line = fgets($handle)) !== false) {
-
-        // if the line is blank, skip it
-        if(trim($line) == '') continue;
-
-        // read csv row as associative array
-        $i++;
-        $fields = str_getcsv(trim($line));
-        if($i == 1) {
-          foreach($fields as $f) $headers[] = trim($f);
-          continue;
-        }
-        $rowData = array_combine($headers, $fields);
-
-        // any interesting fields to track???
-        // $fieldsToDisplay = array("is_deceased", "support_probability_score");
-        // foreach($fieldsToDisplay as $f){
-        //   if($rowData[$f] != '' && $rowData[$f] != "false") echo $f . ": " . $rowData[$f] . "\n";
-        // }
-
-        $rkvoter = $this -> _loadVoter($rowData);
-        $this -> db -> updateOrCreate('voters', $rkvoter, array('nbid' => $rkvoter['nbid']));
-      }
-      fclose($handle);
-    } else {
-
-      echo "file not found";
-
-      exit("unable to load the data file: " . $voter_file);
-    }
   }
 
-
-  function _loadVoter($nb_row){
+  function writeVoterToDatabase($nb_row){
 
     $rkvoter_row = array();
 
@@ -163,7 +131,79 @@ Class RKVoters_NationbuilderImportModel {
       $rkvoter_row['phone2Type'] = "work";
     }
 
-    return $rkvoter_row;
+
+    // and write to the database
+    if(!is_numeric($nbid)) exit("Bad NBID");
+    $nbid = (int) $rkvoter_row['nbid'];
+
+
+    $this -> db -> updateOrCreate('voters', $rkvoter_row, array('nbid' => $rkvoter_row['nbid']));
 
   }
+
+
+
+
+  function importVoterHistoryFile($vh_file){
+    $options = array(
+      //"fieldsToDisplay" => array("election_at", "ballot_vote_method"),
+      // "maxRows" => 10
+    );
+    runFileLineByLine($vh_file, $this, "importVhRecord", $options);
+  }
+
+  function importVhRecord($vh_record){
+    extract($vh_record);
+
+    $f = false;
+    switch($election_at){
+      case "2016-11-08" :
+        $f = "General16";
+      break;
+
+      case "2015-11-03" :
+        $f = "General15";
+      break;
+
+      case "2014-11-04" :
+        $f = "General14";
+      break;
+
+      case "2012-11-06" :
+        $f = "General12";
+      break;
+
+      case "2016-06-14" :
+        $f = "Primary16";
+      break;
+
+      case "2014-06-10" :
+        $f = "Primary14";
+      break;
+
+    }
+
+    $v = false;
+    switch($ballot_vote_method){
+      case "absentee" :
+        $v = "A";
+      break;
+
+      case "voted":
+        $v = "P";
+      break;
+    }
+
+    if(!$f || !$v) return;
+
+    $update = array($f => $v);
+    $where = array("nbid" => $signup_id);
+
+
+    $updatedVoter = $this -> db -> update("voters", $update, $where);
+    if(count($updatedVoter) == 0) exit("Voter id: " . $signup_id . " not found.");
+
+
+  }
+
 }
