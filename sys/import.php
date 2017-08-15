@@ -3,10 +3,12 @@
 	set_time_limit(0);
 	// header('Content-Type: text/plain');
 
+	error_reporting(E_ALL);
+	ini_set("display_errors", 1);
 
 	// load data handler
-	include("config.php");
-	include("models/import_model.php");
+	include("../rk-config.php");
+	include("../models/model-van.php");
 
 
 	// authentication here...

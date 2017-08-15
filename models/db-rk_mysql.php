@@ -135,6 +135,20 @@
 			return $this -> get_row($sql);
 		}
 
+		function getUpdateSQL($table, $obj, $where){
+			$input = (array) $obj;
+			$sql = 'UPDATE ' . $table;
+			foreach($input as $k => $v){
+				$params[] = $k . "='" . $this -> escape($v) . "'";
+			}
+			$sql .= ' SET ' . implode(',', $params);
+			foreach($where as $k => $v){
+				$whereStrs[] = $k . "='" . $this -> escape($v) . "'";
+			}
+			$sql .= ' WHERE ' . implode(' AND ', $whereStrs);
+			return $sql;
+		}
+
 		function insert($table, $obj){
 			$input = (array) $obj;
 			foreach($input as $k => $v){

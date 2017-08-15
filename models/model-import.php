@@ -1,22 +1,23 @@
 <?php
 
+Class RKVoters_ImportModel {
 
-// data handling methods
+  // data handling methods
 
   function _processStreets(){
 
     $campaignId = $this -> campaignId;
 
-      $sql =  "SELECT DISTINCT(stname) as street_name FROM voters " .
-              "WHERE campaignId=" . (int) $campaignId . " ORDER BY stname";
+    $sql =  "SELECT DISTINCT(stname) as street_name FROM voters " .
+            "WHERE campaignId=" . (int) $campaignId . " ORDER BY stname";
 
-      $streets = $this -> db -> get_results($sql);
+    $streets = $this -> db -> get_results($sql);
 
-      foreach($streets as $street){
-        $s['street_name'] = $street -> street_name;
-        $s['campaignId'] = $campaignId;
-        $this -> db -> getOrCreate('voters_streets', $s, $s);
-      }
+    foreach($streets as $street){
+      $s['street_name'] = $street -> street_name;
+      $s['campaignId'] = $campaignId;
+      $this -> db -> getOrCreate('voters_streets', $s, $s);
+    }
   }
 
   function geoCodeVoter($rkid){
@@ -75,3 +76,4 @@
     $rkids = $this -> db -> get_results($sql);
     exit(json_encode($rkids));
   }
+}

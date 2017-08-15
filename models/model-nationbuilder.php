@@ -152,11 +152,15 @@ Class RKVoters_NationbuilderImportModel {
 
 
 
-  function importVoterHistoryFile($vh_file){
+  function importVoterHistoryFile($vh_file, $target_file){
     $options = array(
       //"fieldsToDisplay" => array("election_at", "ballot_vote_method"),
       // "maxRows" => 10
     );
+
+
+    $this -> target_handle = fopen($target_file, "w");
+
     runFileLineByLine($vh_file, $this, "importVhRecord", $options);
   }
 
@@ -203,13 +207,13 @@ Class RKVoters_NationbuilderImportModel {
     }
 
     if(!$f || !$v) return;
+    if(!isset($signup_id) || !is_numeric($signup_id)) return;
 
     $update = array($f => $v);
     $where = array("nbid" => $signup_id);
+    $sql = $this -> db -> getUpdateSQL("voters", $update, $where);
 
-
-    $updatedVoter = $this -> db -> update("voters", $update, $where);
-    if(count($updatedVoter) == 0) exit("Voter id: " . $signup_id . " not found.");
+    fwrite($this -> target_handle, $sql . "\n");
 
 
   }

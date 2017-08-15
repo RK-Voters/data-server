@@ -213,9 +213,9 @@
 
 
 			if($street_name != 'Select Street...') $where[] = "stname = '$street_name'";
-			if($stnum) $where[] = "stnum = '$stnum'";
+			if(isset($stnum)) $where[] = "stnum = '$stnum'";
 
-			if($search_str != '') {
+			if(isset($search_str) && $search_str != '') {
 				$where[] = "(firstname LIKE '%$search_str%' or lastname LIKE '%$search_str%'
 								or bio LIKE '%$search_str%' or phone  LIKE '%$search_str%')";
 			}
@@ -342,7 +342,6 @@
 			$sql = "SELECT * FROM voters
 					WHERE " . implode(' and ', $where) .
 					" ORDER BY stname, stnum, unit, lastname" . $limit;
-
 
 			$knocklist = $this -> db -> get_results($sql);
 			foreach($knocklist as $index => $person){

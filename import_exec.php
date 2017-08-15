@@ -11,8 +11,8 @@
 
   $nbmodel -> campaignId = 2;
 
-  $voter_file = "data/nbvf.csv";
-  $nbmodel -> importVoterFile($voter_file);
-
+  // $voter_file = "data/nbvf.csv";
+  // $nbmodel -> importVoterFile($voter_file);
+  //
   $vh_file = "data/nbvh.csv";
-  $nbmodel -> importVoterHistoryFile($vh_file);
+  $nbmodel -> importVoterHistoryFile($vh_file, "data/vh.sql");
