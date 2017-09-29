@@ -2,6 +2,11 @@
 
 Class RKVoters_ImportModel {
 
+  function __construct(){
+    global $rkdb;
+    $this -> db = $rkdb;
+  }
+
   // data handling methods
 
   function _processStreets(){
@@ -29,12 +34,13 @@ Class RKVoters_ImportModel {
 
     // if lattitude is already set, continue
     if($voter -> lat != 0) {
-      return $voter;
+      return array(
+        "addr_data" => "This voter has already been looked up.",
+        "updatedVoter" => $voter
+      );
     }
 
-    echo "calculating";
-
-    $address = $voter -> address1 . ", " . $voter -> city . ", " . $voter -> state . " " . $voter -> zip;
+    $address = $voter -> stnum . " " . $voter -> stname . ", " . $voter -> city . ", " . $voter -> state . " " . $voter -> zip;
 
     $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' .
             urlencode($address) .
@@ -64,9 +70,12 @@ Class RKVoters_ImportModel {
       "rkid" => $voter -> rkid
     );
 
-    $this -> db -> update("voters", $update, $where);
+    $updatedVoter = $this -> db -> update("voters", $update, $where);
 
-    return $update;
+    return array(
+      "addr_data" => $addr_data,
+      "updatedVoter" => $updatedVoter
+    );
 
   }
 

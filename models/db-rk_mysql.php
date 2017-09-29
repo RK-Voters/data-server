@@ -59,7 +59,7 @@
 
     // GETTERS
 
-    function get_var($sql){
+    	function get_var($sql){
 			 $result = $this -> run_query($sql);
 			 return $result ? $result -> fetch_array()[0] : false;
 		}
