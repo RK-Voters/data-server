@@ -3,7 +3,7 @@
   // SERVER CONFIG
   $cwd = getcwd();
 
-  if($cwd == "/var/www/html"){
+  if(strpos($cwd, "/var/www/html") !== false) {
     $config = array(
      "servername" => "localhost",
      "username" => "rkvotersdb",
