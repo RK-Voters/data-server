@@ -35,6 +35,10 @@
 			$rkid = $voter -> rkid;
 			$geocode_data = $import_model -> geoCodeVoter($rkid);
 
+			if (isset($geocode_data["addr_error"])) {
+    			echo $geocode_data["addr_error"];
+			}
+
 			$sql = "SELECT Count(*) FROM voters where campaignid=" . $campaignid . " AND active=1 AND lat=0";
 			$remainingSize = $rkdb -> get_var($sql);
 

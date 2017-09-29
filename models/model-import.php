@@ -38,7 +38,7 @@ Class RKVoters_ImportModel {
     // if lattitude is already set, continue
     if($voter -> lat != 0) {
       return array(
-        "addr_data" => "This voter has already been looked up.",
+        "addr_error" => "Error: This voter has already been looked up.",
         "updatedVoter" => $voter
       );
     }
@@ -50,6 +50,14 @@ Class RKVoters_ImportModel {
             '&key=%20AIzaSyCZlSd7CYYktdeZIeELO0dmIZfp-Ca5vZA';
 
     $addr_data = json_decode(file_get_contents($url));
+
+    if(count($addr_data -> results) == 0){
+      return array(
+        "addr_error" => "Error: Google didn't find any matching records for: " . $address . "\n$url\n\n",
+        "updatedVoter" => $voter
+      );
+    }
+
 
     $location = (array) $addr_data -> results[0] -> geometry -> location;
 
