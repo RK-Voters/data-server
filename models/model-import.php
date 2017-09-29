@@ -31,6 +31,9 @@ Class RKVoters_ImportModel {
 
     $voter = $this -> db -> get_row($sql);
 
+    if(count($voter) == 0){
+      exit("Voter " . $rkid . " not found.");
+    }
 
     // if lattitude is already set, continue
     if($voter -> lat != 0) {
