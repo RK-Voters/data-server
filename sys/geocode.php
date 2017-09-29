@@ -7,6 +7,7 @@
 	include("../rk-config.php");
 	include("../models/model-import.php");
 	$import_model = new RKVoters_ImportModel();
+	ob_start();
 
 
 	// if an rkid is specified, geo-code that voter
@@ -44,7 +45,7 @@
 
 			echo ($k + 1) . ". Mapped Voter #" . $rkid . " - " . $remainingSize . " of " . $totalSize . " remaining.\n\n";
 
-			flush();
+			ob_flush(); flush();
 
 		}
 		
