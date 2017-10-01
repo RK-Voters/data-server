@@ -2,6 +2,7 @@
 
   // SERVER CONFIG
   $cwd = getcwd();
+  global $config;
 
   if(strpos($cwd, "/var/www/html") !== false) {
     $config = array(
@@ -21,6 +22,8 @@
     );
   }
 
+
+  $config['googlemaps_apikey'] = '%20AIzaSyCZlSd7CYYktdeZIeELO0dmIZfp-Ca5vZA';
 
 
   // CREATE GLOBAL DATABASE OBJECT

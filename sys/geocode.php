@@ -59,12 +59,16 @@
 
 			if (isset($geocode_data["addr_error"])) {
     			echo $geocode_data["addr_error"];
+    			continue;
 			}
 
 			$sql = "SELECT Count(*) FROM voters where campaignid=" . $campaignid . " AND active=1 AND lat=0";
 			$remainingSize = $rkdb -> get_var($sql);
 
-			echo ($k + 1) . ". Mapped Voter #" . $rkid . " - " . $remainingSize . " of " . $totalSize . " remaining.\n\n";
+			$completed = parseInt($totalSize) - parseInt($remainingSize);
+
+			echo ($k + 1) . ". Mapped Voter #" . $rkid . " - " . $completed . " done. " . 
+							$remainingSize . " remaining. " . $totalSize . " total.\n\n";
 
 			ob_flush(); flush();
 

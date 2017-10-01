@@ -10,6 +10,7 @@ Class RKVoters_ImportModel {
   // data handling methods
 
   function _processStreets(){
+    global $config;
 
     $campaignId = $this -> campaignId;
 
@@ -47,7 +48,7 @@ Class RKVoters_ImportModel {
 
     $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' .
             urlencode($address) .
-            '&key=%20AIzaSyCZlSd7CYYktdeZIeELO0dmIZfp-Ca5vZA';
+            '&key=' . $config['googlemaps_apikey'];
 
     $addr_data = json_decode(file_get_contents($url));
 
