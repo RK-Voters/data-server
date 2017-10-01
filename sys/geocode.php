@@ -1,5 +1,26 @@
 <?php
 
+	/*************************************************************************************************************
+	*	GEOCODING SCRIPT
+	
+		- Designed to be run from a browser, this script updates the voter database using the Google Geocoding API
+
+		- @param : read two $_GET variables: rkid and campaignId 
+
+		- If rkid is set, 
+			- Fetch the user and update their lot \ lon.
+			- Return JSON with the Google request and their updated entry in the voter table.
+
+
+		- Else if campaignId is set, 
+			- iterate through all the active voters in the campaign
+			- geocode them accordingly
+			- flush regular udates to the screen
+
+
+	*************************************************************************************************************/
+
+
 	set_time_limit(0);
 	header('Content-Type: text/plain');
 
