@@ -22,14 +22,13 @@
 			$response =  $this -> conn -> query($sql);
 			if (!$response) {
 
-				// $error_str = 	"Error: " . $this -> conn->error .
-				// 							$this -> linebreak . $this -> linebreak . $sql .
-				// 							$this -> linebreak . $this -> linebreak ;
+				$error_str = 	$this -> conn->error .
+								$this -> linebreak . $this -> linebreak . $sql;
 
 				// TBD: log to error table
 
 				// return to user
-				echo json_encode(array("error" => $this -> conn -> error));
+				echo json_encode(array("error" => $error_str));
 				exit;
 			}
 			return $response;
