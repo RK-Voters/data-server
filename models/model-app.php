@@ -83,7 +83,6 @@
 
 			// set the user
 			$this -> user = $user;
-
 		}
 
 		function getUserById($userId){
@@ -391,7 +390,6 @@
 			$list = $this -> get_knocklist();
 
 			return $list;
-
 		}
 
 
@@ -419,7 +417,6 @@
 			return array(
 				"knocklist" => $this -> get_knocklist()
 			);
-
 		}
 
 

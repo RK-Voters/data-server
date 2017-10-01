@@ -10,7 +10,6 @@ Class RKVoters_ImportModel {
   // data handling methods
 
   function _processStreets(){
-    global $config;
 
     $campaignId = $this -> campaignId;
 
@@ -27,14 +26,16 @@ Class RKVoters_ImportModel {
   }
 
   function geoCodeVoter($rkid){
+    global $config;
 
+
+    // get the voter
     $sql = "SELECT * FROM voters WHERE rkid=" . (int) $rkid;
-
     $voter = $this -> db -> get_row($sql);
-
     if(count($voter) == 0){
       exit("Voter " . $rkid . " not found.");
     }
+
 
     // if lattitude is already set, continue
     if($voter -> lat != 0) {
@@ -44,14 +45,16 @@ Class RKVoters_ImportModel {
       );
     }
 
-    $address = $voter -> stnum . " " . $voter -> stname . ", " . $voter -> city . ", " . $voter -> state . " " . $voter -> zip;
 
+    // call the google maps api
+    $address = $voter -> stnum . " " . $voter -> stname . ", " . $voter -> city . ", " . $voter -> state . " " . $voter -> zip;
     $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' .
             urlencode($address) .
             '&key=' . $config['googlemaps_apikey'];
-
     $addr_data = json_decode(file_get_contents($url));
 
+
+    // if not found, return error
     if(count($addr_data -> results) == 0){
       return array(
         "addr_error" => "Error: Google didn't find any matching records for: " . $address . "\n$url\n\n",
@@ -60,10 +63,9 @@ Class RKVoters_ImportModel {
     }
 
 
+    // parse data and update voter
     $location = (array) $addr_data -> results[0] -> geometry -> location;
-
     $address_components = $addr_data -> results[0] -> address_components;
-
     $neighborhoodName = "";
     foreach($address_components as $c){
       if($c -> types[0] == 'neighborhood'){
@@ -71,18 +73,17 @@ Class RKVoters_ImportModel {
         break;
       }
     }
-
     $update = array(
       "lat" => $location['lat'],
       "lon" => $location['lng'],
       "google_neighborhood" => $neighborhoodName
     );
-
     $where = array(
       "rkid" => $voter -> rkid
     );
-
     $updatedVoter = $this -> db -> update("voters", $update, $where);
+
+
 
     return array(
       "addr_data" => $addr_data,
