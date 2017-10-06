@@ -13,13 +13,17 @@ Class RKVoters_ImportModel {
 
     $campaignId = $this -> campaignId;
 
-    $sql =  "SELECT DISTINCT(stname) as street_name FROM voters " .
+    $sql =  "SELECT DISTINCT stname, city FROM voters " .
             "WHERE campaignId=" . (int) $campaignId . " ORDER BY stname";
+
+    echo $sql;
 
     $streets = $this -> db -> get_results($sql);
 
     foreach($streets as $street){
-      $s['street_name'] = $street -> street_name;
+      $s = array();
+      $s['street_name'] = $street -> stname;
+      $s['city'] = $street -> city;
       $s['campaignId'] = $campaignId;
       $this -> db -> getOrCreate('voters_streets', $s, $s);
     }

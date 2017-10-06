@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<meta charset="utf-8">
+		<title>RK Voters - Turf Manager</title>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+		<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.3/dist/css/bootstrap-material-design.min.css">
+
+
+
+
+		<style>
+			/* Always set the map height explicitly to define the size of the div
+			 * element that contains the map. */
+			#map {
+				height: 100%;
+				width: 100%;
+				position: absolute;
+				z-index: 1;
+			}
+
+
+			#contentFrame {
+				padding: 15px;
+				height: 600px;
+				width: 300px;
+				background: white;
+				position: absolute;
+				z-index: 5;
+				margin: 40px;
+				box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14),0 1px 10px 0 rgba(0,0,0,0.12),0 2px 4px -1px rgba(0,0,0,0.2);
+				
+			}
+
+			/* Optional: Makes the sample page fill the window. */
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+
+			.streetList {
+				border: 1px solid #ccc;
+				width: 270px;
+				margin: 10px 0;
+				padding: 0;
+				max-height: 250px;
+				overflow-y: auto;
+			}
+
+			.add_street {
+				color: #365899;
+				background: #ccc;
+				border-bottom: solid 1px #999;
+				font-weight: bold
+			}
+
+			.streetList li {
+				list-style: none;
+				font-size: 11px;
+				line-height: 20px;
+				padding: 0 8px;
+				cursor: pointer;
+			}
+
+			.streetList li:hover {
+				background: #ccc;
+			}
+			.streetList li.selected {
+				background: #365899;
+				color: white;   
+			}
+
+			.street_info, .turf_info {
+				font-size: 11px;
+			}
+
+
+			.remove_street, .delete_turf {
+				color: #365899;
+				text-decoration: underline;
+				margin: 10px 0;
+				cursor: pointer;
+				display: inline-block;
+
+			}
+		</style>
+	</head>
+	<body  ng-app="turfMgrApp" ng-controller="turfMgrCtrl">
+		<div id="map"></div>
+		<div id="contentFrame">
+			<div class="turf_mgr">
+				
+                <!-- SELECT A TURF -->
+                <div class="form-group bmd-form-group">
+                    <label for="turf_selector" class="bmd-label-static">Turf</label>
+                    <select class="form-control" id="turf_selector" ng-change="loadTurf()" ng-model="selected_turf">
+                        <option value="">Select a Turf...</option>
+                        <option value="ADD">+ Add a New Turf</option>
+                        <option ng-repeat="turf in turfs" ng-value="turf">{{turf.turf_name}}</option>
+                    </select>
+                </div>
+
+                <!-- TURF ADDER TAB -->
+                <div ng-if="tab == 'add_turf' ">
+                    <div class="form-group bmd-form-group">
+                        <label for="new_turf_name"  class="bmd-label-static">Turf Name</label>
+                        <input type="text" class="form-control" id="new_turf_name" ng-model="new_turf.turf_name" ng-keyup="filterStreets()">
+                    </div>
+                    <button type="button" class="btn btn-raised btn-success" ng-click="addTurf()">ADD</button>
+                </div>
+
+
+				<!-- STREET MANAGER TAB -->
+				<div ng-if="tab == 'mgr' ">
+
+					<!-- STREET LIST -->
+					<ul class="streetList" ng-if="selected_turf">
+						<li class="add_street" ng-click="openAdder()">ADD STREET</li>
+						<li class="street_listitem" ng-class="{ selected : street == selected_street}"
+							ng-click="selectStreet(street)" ng-repeat="street in selected_streets" >
+								{{street.city}} - {{street.street_name}} ({{street.active_voters}})
+						</li>
+					</ul>
+				</div>
+
+
+				<!-- STREET ADDER TAB -->
+				<div ng-if="tab == 'adder' ">
+					<div class="form-group bmd-form-group">
+						<label for="search_street_name"  class="bmd-label-static">Street Name</label>
+						<input type="text" class="form-control" id="search_street_name" ng-model="search.street_name" ng-keyup="filterStreets()">
+					</div>
+					<ul class="streetList" ng-if="selected_turf">
+						<li class="add_street" ng-click="loadTurf()">CANCEL</li>
+						<li class="street_listitem" ng-class="{ selected : street == selected_street}"
+							ng-click="selectStreet(street)" ng-repeat="street in potential_streets" >{{street.street_name}} ({{street.active_voters}})</li>
+					</ul>
+				</div>
+
+				<!-- STREET INFO -->
+				<div class="street_info" ng-if="selected_street">
+					<span ng-click="deselect_street()" style="color: #ccc; cursor: pointer">&lt;&lt;</span> &nbsp;<b>{{selected_street.street_name}}</b>
+					<br /><br />
+					<table>
+						<tr>
+							<td>{{ selected_street.active_voters }}</td>
+							<td>Active Voters</td>
+						</tr>
+						<tr>
+							<td>{{ selected_street.contacts }}</td>
+							<td>Contacts</td>
+						</tr>
+						<tr>
+							<td>{{ selected_street.supporters }}</td>
+							<td>Supporters</td>
+						</tr>
+					</table>
+					<div ng-if="tab == 'mgr'" class="remove_street" ng-click="removeStreetFromTurf()">Remove Street From Turf</div>
+					<div ng-if="tab == 'adder'" class="remove_street" ng-click="addStreet()">Add Street to Turf</div>
+				</div>
+
+				<!-- TURF INFO -->
+				<div class="turf_info" ng-if="selected_turf && !selected_street">
+					<b style="text-transform: uppercase;">{{selected_turf.turf_name}}</b>
+					<br /><br />
+					<table>
+						<tr>
+							<td>{{ selected_turf.active_voters }}</td>
+							<td>Active Voters</td>
+						</tr>
+						<tr>
+							<td>{{ selected_turf.contacts }}</td>
+							<td>Contacts</td>
+						</tr>
+						<tr>
+							<td>{{ selected_turf.supporters }}</td>
+							<td>Supporters</td>
+						</tr>
+					</table>
+					<div class="delete_turf" ng-click="deleteTurf()">Delete Turf</div>
+				</div>
+
+			</div>
+
+		</div>
+
+
+		<!-- CORE JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+
+		<!-- GOOGLE MAPS -->
+		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKKhEX74R7Cvtq3p0c5qDcjhvWpdbBNps&callback=initMap"></script>		
+
+
+		<!-- BOOTSTRAP MATERIAL DESIGN -->
+		<script src="https://unpkg.com/popper.js@1.12.5/dist/umd/popper.js"></script>
+		<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+		<script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.3/dist/js/bootstrap-material-design.js" integrity="sha384-hC7RwS0Uz+TOt6rNG8GX0xYCJ2EydZt1HeElNwQqW+3udRol4XwyBfISrNDgQcGA" crossorigin="anonymous"></script>
+		<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+
+
+		<!-- TURF MANAGER APP -->
+		<script type="text/javascript" src="voters.js"></script>
+		<script type="text/javascript" src="turf_mgr.js"></script>
+
+
+		
+	</body>
+</html>

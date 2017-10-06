@@ -97,28 +97,49 @@
 		* - updateTotals()
 		****************************************************************/
 
-		// get list of available streets
-		function getStreetList(){
+		function getStreetAndTurfLists(){
+			$sql = 	"SELECT * from voters_turfs " .
+					"WHERE campaignId = " . (int) $this -> campaignId .
+					" ORDER BY turf_name";
+
+			$turfsRaw = $this -> db -> get_results($sql);
+
+
 			$sql = "SELECT * from voters_streets
-							WHERE campaignId = " . (int) $this -> campaignId . "
-							ORDER BY street_name";
+					WHERE campaignId = " . (int) $this -> campaignId . "
+					ORDER BY street_name";
 
 
 			$streetsRaw = $this -> db -> get_results($sql);
-			// $streets = array();
-			// foreach($streetsRaw as $street){
-			// 	// if($street -> active_voters == 0) continue;
-			// 	$streets[] = $street;
-			// }
-			return $streetsRaw;
+
+			$turfs = array();
+			foreach($turfsRaw as $turf){
+				// if($street -> active_voters == 0) continue;
+				$turfs[$turf -> turfid] = array(
+					"turf" => $turf,
+					"streets" => array()
+				);
+			}
+
+
+			foreach($streetsRaw as $street){
+				$turfs[$street -> turfid]["streets"][] = $street;
+			}
+
+			return $turfs;
 		}
 
 
+		function createTurf(){
+			extract($this -> request);
+			if(!isset($turf)) handleError("Please provide a turf.");
+			$turfid = $this -> db -> insert('voters_turfs', $turf);
+			return $turfid;
+		}
+
 		// get list of available turfs
 		function getTurfList(){
-			$sql = "SELECT * from voters_turfs";
-			$turfs = $this -> db -> get_results($sql);
-			return $turfs;
+
 		}
 
 
@@ -130,6 +151,10 @@
 			$this -> db -> update('voters_streets', $update, $where);
 			return $this -> getStreetList();
 		}
+
+
+
+
 
 
 		// update totals
@@ -185,6 +210,10 @@
 				'turfs' => $this -> getTurfList()
 			);
 		}
+
+
+
+
 
 
 		// get list of people by search criteria
