@@ -20,13 +20,29 @@ Class RKVoters_ImportModel {
 
     $streets = $this -> db -> get_results($sql);
 
+    // foreach($streets as $street){
+    //   $s = array();
+    //   $s['street_name'] = $street -> stname;
+    //   $s['city'] = $street -> city;
+    //   $s['campaignId'] = $campaignId;
+    //   $this -> db -> getOrCreate('voters_streets', $s, $s);
+    // }
+
+
+    $sql = "SELECT * FROM voters_streets where  campaignId=" . (int) $campaignId;
+    $streets = $this -> db -> get_results($sql);
     foreach($streets as $street){
-      $s = array();
-      $s['street_name'] = $street -> stname;
-      $s['city'] = $street -> city;
-      $s['campaignId'] = $campaignId;
-      $this -> db -> getOrCreate('voters_streets', $s, $s);
+      $update = array(
+        "streetId" => $street -> streetid
+      );
+      $where = array(
+        "city" => $street -> city,
+        "stname" => $street -> street_name,
+        "campaignId" => $this -> campaignId
+      );
+      $this -> db -> update("voters", $update, $where, false);
     }
+
   }
 
   function geoCodeVoter($rkid){

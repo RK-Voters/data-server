@@ -107,71 +107,98 @@
 
 			$sql = "SELECT * from voters_streets
 					WHERE campaignId = " . (int) $this -> campaignId . "
-					ORDER BY street_name";
+					ORDER BY city, street_name";
 
 
 			$streetsRaw = $this -> db -> get_results($sql);
 
-			$turfs = array();
-			foreach($turfsRaw as $turf){
-				// if($street -> active_voters == 0) continue;
-				$turfs[$turf -> turfid] = array(
-					"turf" => $turf,
-					"streets" => array()
-				);
-			}
-
-
-			foreach($streetsRaw as $street){
-				$turfs[$street -> turfid]["streets"][] = $street;
-			}
-
-			return $turfs;
+			
+			return array(
+				"turfs" => $turfsRaw,
+				"streets" => $streetsRaw
+			);
 		}
-
 
 		function createTurf(){
 			extract($this -> request);
-			if(!isset($turf)) handleError("Please provide a turf.");
+			if(!isset($terms -> turf_name)) handleError("Please provide a turf.");
+			$turf = array(
+				"turf_name" => $terms -> turf_name,
+				"campaignId" => $this -> campaignId
+			);
 			$turfid = $this -> db -> insert('voters_turfs', $turf);
-			return $turfid;
+			return array( "turfid" => $turfid);
 		}
 
 		// get list of available turfs
 		function getTurfList(){
-
 		}
 
+		// delete turf
+		function deleteTurf(){
+			extract($this -> request);
+			if(!isset($terms ->turfid) || $terms -> turfid == 0) handleError("Please provide a turf id.");
+
+			$this -> db -> delete("voters_turfs", array("turfId" => $terms -> turfid));
+
+			$this -> db -> update("voters_streets", array("turfid" => 0), array("turfid" => $terms -> turfid), false);
+
+			return $this -> getStreetAndTurfLists();
+		}
 
 		// update turf assignment for street
-		function updateTurfAssignment(){
+		function updateTurfAssignment($oldTurfId = false){
 			extract($this -> request);
+
+			
+			$newTurfid = ($oldTurfId) ? 0 : $terms -> turfid;
+			$streetid = $terms -> streetid;
+
+			// assign street to turf
+			$update = array('turfid' => $newTurfid);
 			$where = array('streetid' => $streetid);
-			$update = array('turfid' => $turfid);
 			$this -> db -> update('voters_streets', $update, $where);
-			return $this -> getStreetList();
+
+
+			$turfid = ($oldTurfId) ? $oldTurfId : $terms -> turfid;
+
+
+			// update that turf and return the revised one
+			$turf_totals = array(
+				'active_voters' => $this -> db -> get_var("SELECT SUM(active_voters) FROM voters_streets s where s.turfid = " . $turfid),
+				'contacts' => $this -> db -> get_var("SELECT SUM(contacts) FROM voters_streets s where s.turfid = " . $turfid),
+				'supporters' => $this -> db -> get_var("SELECT SUM(supporters) FROM voters_streets s where s.turfid = " . $turfid)
+			);
+
+			$this -> db -> update('voters_turfs', $turf_totals, array('turfid' => $turfid));
+
+			return $this -> db -> get_rowFromObj("voters_turfs", array("turfid" => $turfid));
 		}
 
 
-
+		function removeStreetFromTurf(){
+			return $this -> updateTurfAssignment($this -> request['terms'] -> turfid);
+		}
 
 
 
 		// update totals
 		function updateTotals(){
 
-			$streets = $this -> getStreetList();
+			extract($this -> getStreetAndTurfLists());
 
 
+			/* STREETS */
 			foreach($streets as $street){
 
 				$sql = 	"SELECT COUNT(*) as total FROM voters " .
-								"where stname='" . $this -> db -> escape($street -> street_name) . "'
-						 		 and active=1 and campaignId=" . (int) $this -> campaignId;
+								"where streetId='" . (int) $street -> streetid . "'
+						 		 and active=1";
+
 
 				$contact_sql = "SELECT COUNT(*) FROM VOTERS v
-													WHERE stname = '" . $this -> db -> escape($street -> street_name) . "' AND
-													EXISTS (SELECT * FROM VOTERS_CONTACTS c WHERE v.rkid = c.rkid and c.status = 'canvassed') ";
+								WHERE streetId=" . (int) $street -> streetid . " AND
+								EXISTS (SELECT * FROM VOTERS_CONTACTS c WHERE v.rkid = c.rkid and c.status = 'canvassed') ";
 
 				$street_totals = array(
 					'active_voters' => $this -> db -> get_var($sql),
@@ -184,31 +211,20 @@
 
 			}
 
-			/* TBD */
-
-			$turfs = $this -> getTurfList();
+			/* TURFS */
 			foreach($turfs as $turf){
 
-
-				$sql = 	"SELECT COUNT(*) as total FROM voters v, voters_streets s " .
-						"where v.stname1=s.street_name and s.turfid=" . $turf -> turfid .
-						" and v.active=1";
-
 				$turf_totals = array(
-					'active_voters' => $this -> db -> get_var($sql),
-					'contacts' => $this -> db -> get_var($sql . ' and (support_level = 1 or support_level = 2 or support_level = 3)'),
-					'supporters' => $this -> db -> get_var($sql . ' and v.support_level = 1')
+					'active_voters' => $this -> db -> get_var("SELECT SUM(active_voters) FROM voters_streets s where s.turfid = " . $turf -> turfid),
+					'contacts' => $this -> db -> get_var("SELECT SUM(contacts) FROM voters_streets s where s.turfid = " . $turf -> turfid),
+					'supporters' => $this -> db -> get_var("SELECT SUM(supporters) FROM voters_streets s where s.turfid = " . $turf -> turfid)
 				);
 
-				$this -> db -> update('voters_turfs', $turf_totals,
-										array('turfid' => $turf -> turfid));
+				$this -> db -> update('voters_turfs', $turf_totals, array('turfid' => $turf -> turfid));
 
 			}
 
-			return array(
-				'streets' => $this -> getStreetList(),
-				'turfs' => $this -> getTurfList()
-			);
+			return $this -> getStreetAndTurfLists();
 		}
 
 

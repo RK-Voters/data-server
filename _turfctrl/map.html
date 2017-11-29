@@ -87,12 +87,34 @@
 				display: inline-block;
 
 			}
+
+            .view_all {
+                font-size: 11px;
+                color: #365899;
+                text-decoration: underline;
+                cursor: pointer;
+                text-align: right;
+            }
+
+            .update_data  {
+                text-align: center; 
+                font-size: 11px;
+                color: #365899;
+                text-decoration: underline;
+                cursor: pointer;
+                position: absolute;
+                bottom: 5px; left: 0;
+                width: 100%;
+            }
 		</style>
 	</head>
 	<body  ng-app="turfMgrApp" ng-controller="turfMgrCtrl">
 		<div id="map"></div>
 		<div id="contentFrame">
 			<div class="turf_mgr">
+                
+                <div class="update_data" ng-click="updateData()" >Update Data</div>
+
 				
                 <!-- SELECT A TURF -->
                 <div class="form-group bmd-form-group">
@@ -104,11 +126,13 @@
                     </select>
                 </div>
 
+                <div class="view_all" ng-click="redrawAddresses()">View All</div>
+
                 <!-- TURF ADDER TAB -->
                 <div ng-if="tab == 'add_turf' ">
                     <div class="form-group bmd-form-group">
                         <label for="new_turf_name"  class="bmd-label-static">Turf Name</label>
-                        <input type="text" class="form-control" id="new_turf_name" ng-model="new_turf.turf_name" ng-keyup="filterStreets()">
+                        <input type="text" class="form-control" id="new_turf_name" ng-model="new_turf.turf_name" >
                     </div>
                     <button type="button" class="btn btn-raised btn-success" ng-click="addTurf()">ADD</button>
                 </div>
@@ -137,7 +161,8 @@
 					<ul class="streetList" ng-if="selected_turf">
 						<li class="add_street" ng-click="loadTurf()">CANCEL</li>
 						<li class="street_listitem" ng-class="{ selected : street == selected_street}"
-							ng-click="selectStreet(street)" ng-repeat="street in potential_streets" >{{street.street_name}} ({{street.active_voters}})</li>
+							ng-click="selectStreet(street)" ng-repeat="street in potential_streets" >
+                                {{street.city}} - {{street.street_name}} ({{street.active_voters}})</li>
 					</ul>
 				</div>
 

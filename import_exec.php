@@ -6,13 +6,13 @@
   include("rk-config.php");
 
 
-  include("models/model-import.php");
-  $model = new RKVoters_ImportModel();
-  $model -> campaignId = 2;
-  $model -> _processStreets();
-
+  // 
 
   global $rkdb;
+
+
+  $sql = 'SELECT rkid, lat, lon, streetId from voters';
+  echo json_encode($rkdb -> get_results($sql));
 
   // $addresses = json_decode(file_get_contents("voters.js"));
   // foreach($addresses as $a){
@@ -20,6 +20,10 @@
   // }
 
 
+  // include("models/model-import.php");
+  // $model = new RKVoters_ImportModel();
+  // $model -> campaignId = 2;
+  // $model -> _processStreets();
 
 
 

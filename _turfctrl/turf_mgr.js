@@ -1,11 +1,4 @@
 
-var addresses = [];
-$.each(voters, function(i, v){
-	addresses.push({
-		lat : parseFloat(v.lat),
-		lng : parseFloat(v.lon)
-	})
-});
 
 
 
@@ -51,23 +44,27 @@ app.controller('turfMgrCtrl', ['$scope', '$http', '$sce', '$rootScope', '$window
 		
 		$scope.init = function(){
 			$scope.processApi("getStreetAndTurfLists", {}, function(response){
-				$scope.turfs = response;
+				$scope.turfs = response.turfs;
+				$scope.streets = response.streets;
+			});
+		}
+
+		$scope.updateData = function(){
+			$scope.processApi("updateTotals", {}, function(response){
+				$scope.turfs = response.turfs;
+				$scope.streets = response.streets;
 			});
 		}
 
 
 		$scope.addTurf = function(){
-
-			// replace this with an API call
 			var t = angular.copy($scope.new_turf);
-			
-			$scope.processApi("addTurf", t, function(response){
+			$scope.processApi("createTurf", t, function(response){
 				t.turfid = response;
 				$scope.turfs.push(t);
 				$scope.selected_turf = t;
 				$scope.tab = 'mgr';
 			});
-
 		}
 
 		$scope.loadTurf = function(){
@@ -86,11 +83,30 @@ app.controller('turfMgrCtrl', ['$scope', '$http', '$sce', '$rootScope', '$window
 						return street.turfid == $scope.selected_turf.turfid 
 					}
 				);
+				$scope.selected_streetIds = [];
+				angular.forEach($scope.selected_streets, function(s, i){ 
+					$scope.selected_streetIds.push(s.streetid) 
+				})
+
+				console.log($scope.selected_streetIds);
+
+				$scope.clearMap();
+				$scope.redrawAddresses({turfid : $scope.selected_turf.turfid})
 
 			}
-
 		}
 
+		$scope.deleteTurf = function(){
+			var r = {
+				turfid : $scope.selected_turf.turfid
+			}
+			$scope.processApi("deleteTurf", r, function(response){
+				$scope.turfs = response.turfs;
+				$scope.streets = response.streets;
+				$scope.selected_turf = "";
+				$scope.tab = 'mgr';
+			});
+		}
 
 
 
@@ -117,33 +133,84 @@ app.controller('turfMgrCtrl', ['$scope', '$http', '$sce', '$rootScope', '$window
 		}
 
 
+
+		// MANAGE STREETS
+
 		$scope.addStreet = function(){
 
 			$scope.selected_street.turfid = $scope.selected_turf.turfid;
 
 			// API CALL
+			var r = {
+				turfid : $scope.selected_turf.turfid,
+				streetid : $scope.selected_street.streetid	
+			}
+
+			$scope.processApi("updateTurfAssignment", r, function(updated_turf){
+				for(var field in updated_turf){
+					$scope.selected_turf[field] = updated_turf[field];
+				}
+			});
 
 			$scope.loadTurf();
 		}
 
-
 		$scope.selectStreet = function(street){
 			$scope.selected_street = street;
+			$scope.clearMap();
+			$scope.redrawAddresses({ streetId : street.streetid })
+
 		}
 
 		$scope.deselect_street= function(){
 			$scope.selected_street = false;
+			$scope.redrawAddresses({"turfid" : $scope.selected_turf.turfid});
 		}
 
 		$scope.removeStreetFromTurf = function(){
 			
-			// make api call
+			// API CALL
+			var r = {
+				turfid : $scope.selected_turf.turfid,
+				streetid : $scope.selected_street.streetid	
+			}
+
+			$scope.processApi("removeStreetFromTurf", r, function(updated_turf){
+				for(var field in updated_turf){
+					$scope.selected_turf[field] = updated_turf[field];
+				}
+
+				$scope.selected_street.turfid = "";
+				$scope.selected_street = false;
+				$scope.loadTurf();
+
+			});
 			
+		}
 
-			$scope.selected_street.turfid = "";
-			$scope.selected_street = false;
-			$scope.loadTurf();
+		$scope.redrawAddresses = function(opts){
+			for(var i = 0; i < markers.length; i++){
+				marker = markers[i];
+				if(!opts){
+					marker.setMap(map);
+					mc.addMarker(marker);
+				}
+				else if("streetId" in opts && marker.streetId == opts.streetId){
+					marker.setMap(map);
+				}
+				else if("turfid" in opts && $scope.selected_streetIds.indexOf(marker.streetId) !== -1) {
+					marker.setMap(map);
+				}
+			}
+		}
 
+		$scope.clearMap = function(){
+			for(var i = 0; i < markers.length; i++){
+				marker = markers[i];
+				mc.removeMarker_(marker);
+				marker.setMap(null);
+			}
+			mc.resetViewport();
 		}
 
 		// AND AWAY WE GO!!!
@@ -155,33 +222,43 @@ app.controller('turfMgrCtrl', ['$scope', '$http', '$sce', '$rootScope', '$window
 
 function initMap() {
 
-	var map = new google.maps.Map(document.getElementById('map'), {
+	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 11,
 		center: {lat: 43.8961, lng: -69.9632},
 		// mapTypeId: 'terrain'
 	});
 
-
+	
+	markers = [];
+	
 	// Create an array of alphabetical characters used to label the markers.
 	var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-	// Add some markers to the map.
-	// Note: The code uses the JavaScript Array.prototype.map() method to
-	// create an array of markers based on a given "locations" array.
-	// The map() method here has nothing to do with the Google Maps API.
-	var markers = addresses.map(function(location, i) {
-	  return new google.maps.Marker({
-	    position: location,
-	    label: labels[i % labels.length]
-	  });
-	});
-
-	// Add a marker clusterer to manage the markers.
-	var markerCluster = new MarkerClusterer(map, markers,
-	    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	
 
+	for(var i = 0; i < voters.length; i++){
+		var location = voters[i];
+
+		var m = new google.maps.Marker({
+			position: {
+				lat : parseFloat(location.lat),
+				lng : parseFloat(location.lon)
+			},
+			label: labels[i % labels.length]
+		});
+		m.streetId = location.streetId;
+		m.setMap(map);
+		markers.push(m);
+	}
+
+
+	// Add a marker clusterer to manage the markers.
+	mc = new MarkerClusterer(map, markers,
+	    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+	
 }
+
+
 
 
 

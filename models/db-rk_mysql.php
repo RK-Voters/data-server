@@ -105,7 +105,7 @@
 			return $count;
 		}
 
-		function update($table, $obj, $where){
+		function update($table, $obj, $where, $max = 1){
 			$input = (array) $obj;
 
 			// generate sql
@@ -115,9 +115,12 @@
 			}
 			$sql .= ' SET ' . implode(',', $params);
 
-			$count = $this -> _countWhereStr($table, $where);
-			if($count  != 1) exit("Tried to update $count rows.");
 
+			// CHECK WHERE STRING AND CONCATENATE
+			if($max){
+				$count = $this -> _countWhereStr($table, $where);
+				if($count  > $max) exit("Tried to update $count rows. Limited to $max.");
+			}
 			foreach($where as $k => $v){
 				$whereStrs[] = $k . "='" . $this -> escape($v) . "'";
 			}
